@@ -4,8 +4,8 @@ import { Button } from "@/components/ui/button";
 import { TextEffect } from "@/components/ui/text-effect";
 import { AnimatedGroup } from "@/components/ui/animated-group";
 
+// Define animation variants that match the expected structure
 const transitionVariants = {
-  item: {
     hidden: {
       opacity: 0,
       filter: "blur(12px)",
@@ -21,7 +21,6 @@ const transitionVariants = {
         duration: 1.5,
       },
     },
-  },
 };
 
 export default function HeroSection() {
@@ -34,9 +33,9 @@ export default function HeroSection() {
               preset="fade-in-blur"
               speedSegment={0.3}
               as="h1"
-              className="text-balance text-5xl font-medium md:text-6xl"
+              className="text-balance text-primary text-5xl font-bold md:text-6xl lg:text-7xl"
             >
-              Healthier daily routine
+              Simple and affordable link in bio, All you need and more!
             </TextEffect>
             <TextEffect
               per="line"

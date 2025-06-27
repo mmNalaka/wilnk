@@ -6,7 +6,7 @@ import { logger } from "hono/logger";
 const app = new Hono().basePath("/api");
 
 app.use(logger());
-app.use("/*", cors());
+app.use("/*", cors({ origin: process.env.CORS_ORIGIN || "" }));
 
 app.on(["POST", "GET"], "/auth/**", (c) => auth.handler(c.req.raw));
 

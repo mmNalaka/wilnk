@@ -4,9 +4,7 @@ import { Verified, Instagram, Github, Linkedin } from "lucide-react";
 import Link from "next/link";
 
 type Params = {
-  params: {
-    slug: string;
-  };
+  params: Promise<{ slug: string }>;
 };
 
 export default async function Page({ params }: Params) {
