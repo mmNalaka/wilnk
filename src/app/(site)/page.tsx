@@ -22,6 +22,7 @@ export default function Home() {
           ? "Connected"
           : "Disconnected"}
       </span>
+      <pre>{JSON.stringify(process.env.NEXT_PUBLIC_SERVER_URL)}</pre>
     </main>
   );
 }

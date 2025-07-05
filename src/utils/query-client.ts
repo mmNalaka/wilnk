@@ -22,16 +22,20 @@ export const queryClient = new QueryClient({
   }),
 });
 
-export const link = new RPCLink({
-  url: `${process.env.NEXT_PUBLIC_SERVER_URL}/rpc`,
-  fetch(url, options) {
-    return fetch(url, {
-      ...options,
-      credentials: "include",
-    });
-  },
-});
+const getLink = () => {
+  const BASE_URL = process.env.NEXT_PUBLIC_SERVER_URL || window.location.origin;
+  return new RPCLink({
+    url: `${BASE_URL}/rpc`,
+    fetch(url, options) {
+      return fetch(url, {
+        ...options,
+        credentials: "include",
+      });
+    },
+  });
+};
 
-export const client: RouterClient<typeof appRouter> = createORPCClient(link)
+export const link = getLink();
+export const client: RouterClient<typeof appRouter> = createORPCClient(link);
 
-export const orpc = createTanstackQueryUtils(client)
+export const orpc = createTanstackQueryUtils(client);
