@@ -1,4 +1,4 @@
-import { protectedProcedure, publicProcedure } from "@/server/lib/orpc";
+import { publicProcedure } from "@/server/lib/orpc";
 
 
 const healthCheck = publicProcedure.handler(() => {
@@ -10,18 +10,8 @@ const healthCheck = publicProcedure.handler(() => {
     };
 });
 
-const protectedHealthCheck = protectedProcedure.handler(() => {
-    return { 
-        status: "success",
-        data: {
-            message: "OK"
-        }
-    };
-});
-
 
 export const healthRouter = {
     healthCheck,
-    protectedHealthCheck
 };
     

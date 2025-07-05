@@ -24,7 +24,6 @@ export const queryClient = new QueryClient({
   }),
 });
 
-
 export const link = new RPCLink({
   url: `${API_URL}/rpc`,
   fetch(url, options) {
