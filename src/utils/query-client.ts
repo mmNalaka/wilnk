@@ -23,7 +23,7 @@ export const queryClient = new QueryClient({
 });
 
 const getLink = () => {
-  const BASE_URL = process.env.NEXT_PUBLIC_SERVER_URL || window?.location?.origin || ""
+  const BASE_URL = process.env.NEXT_PUBLIC_SERVER_URL || (typeof window !== 'undefined' ? window.location.origin : '')
   return new RPCLink({
     url: `${BASE_URL}/rpc`,
     fetch(url, options) {
