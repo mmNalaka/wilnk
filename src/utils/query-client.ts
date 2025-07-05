@@ -7,8 +7,6 @@ import type { RouterClient } from "@orpc/server";
 
 import { appRouter } from "@/server/routes";
 
-const API_URL = process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:3000"
-
 export const queryClient = new QueryClient({
   queryCache: new QueryCache({
     onError: (error) => {
@@ -25,7 +23,7 @@ export const queryClient = new QueryClient({
 });
 
 export const link = new RPCLink({
-  url: `${API_URL}/rpc`,
+  url: `${process.env.NEXT_PUBLIC_SERVER_URL}/rpc`,
   fetch(url, options) {
     return fetch(url, {
       ...options,
