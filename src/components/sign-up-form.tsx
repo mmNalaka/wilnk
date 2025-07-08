@@ -1,3 +1,6 @@
+"use client";
+
+import Link from "next/link";
 import { useForm } from "@tanstack/react-form";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
@@ -7,14 +10,17 @@ import Loader from "./loader";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
+import { useEffect } from "react";
 
-export default function SignUpForm({
-	onSwitchToSignIn,
-}: {
-	onSwitchToSignIn: () => void;
-}) {
+export default function SignUpForm() {
 	const router = useRouter();
-	const { isPending } = authClient.useSession();
+	const { isPending, data } = authClient.useSession();
+
+	useEffect(() => {
+		if (!isPending && data?.user) {
+			router.push("/dashboard");
+		}
+	}, [data, isPending, router]);
 
 	const form = useForm({
 		defaultValues: {
@@ -49,7 +55,7 @@ export default function SignUpForm({
 		},
 	});
 
-	if (isPending) {
+	if (isPending || (!isPending && data?.user)) {
 		return <Loader />;
 	}
 
@@ -141,7 +147,7 @@ export default function SignUpForm({
 							disabled={!state.canSubmit || state.isSubmitting}
 						>
 							{state.isSubmitting ? "Submitting..." : "Sign Up"}
-						</Button>
+						</Button>	
 					)}
 				</form.Subscribe>
 			</form>
@@ -149,10 +155,12 @@ export default function SignUpForm({
 			<div className="mt-4 text-center">
 				<Button
 					variant="link"
-					onClick={onSwitchToSignIn}
 					className="text-indigo-600 hover:text-indigo-800"
+					asChild
 				>
-					Already have an account? Sign In
+					<Link href="/login">
+						Already have an account? Sign In
+					</Link>
 				</Button>
 			</div>
 		</div>

@@ -27,7 +27,7 @@
       "database_name": "wilnk-dev",
       "database_id": "07d6adc8-67cf-4cfd-8007-eb666a624be6",
       "preview_database_id": "local-test-db",
-      "migrations_dir": "./src/db/migrations"
+      "migrations_dir": "./src/server/db/migrations"
     }
   ]
 }
