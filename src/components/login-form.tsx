@@ -19,13 +19,20 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { authClient } from "@/lib/auth-client";
 import { cn } from "@/lib/utils";
+import { useEffect } from "react";
 
 export function LoginForm({
 	className,
 	...props
 }: React.ComponentProps<"div">) {
 	const router = useRouter();
-	const { isPending } = authClient.useSession();
+	const { isPending, data } = authClient.useSession();
+
+	useEffect(() => {
+		if (!isPending && data?.user) {
+			router.push("/dashboard");
+		}
+	}, [data, isPending, router]);
 
 	const form = useForm({
 		defaultValues: {
@@ -57,7 +64,7 @@ export function LoginForm({
 		},
 	});
 
-	if (isPending) {
+	if (isPending || (!isPending && data?.user)) {
 		return <Loader />;
 	}
 
@@ -137,7 +144,7 @@ export function LoginForm({
 												<div className="flex items-center">
 													<Label htmlFor={field.name}>Password</Label>
 													<Link
-														href="#"
+														href="/forgot-password"
 														className="ml-auto text-sm underline-offset-4 hover:underline"
 													>
 														Forgot your password?
@@ -175,7 +182,7 @@ export function LoginForm({
 							</div>
 							<div className="text-center text-sm">
 								Don&apos;t have an account?{" "}
-								<Link href="#" className="underline underline-offset-4">
+								<Link href="/register" className="underline underline-offset-4">
 									Sign up
 								</Link>
 							</div>

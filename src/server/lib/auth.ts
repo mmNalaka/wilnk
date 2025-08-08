@@ -13,6 +13,29 @@ export const auth = betterAuth({
   trustedOrigins: [process.env.CORS_ORIGIN || ""],
   emailAndPassword: {
     enabled: true,
+    // Configure password reset flow; integrate your email provider here.
+    sendResetPassword: async ({
+      user,
+      url,
+      token,
+    }: {
+      user: { email: string };
+      url: string;
+      token: string;
+    }) => {
+      // TODO: Replace with actual email sending (e.g., Resend, SendGrid, Postmark).
+      // For now, log the URL so it's visible in logs during development.
+      console.log(
+        "[BetterAuth] Password reset link for",
+        user.email,
+        url,
+        "token:",
+        token,
+      );
+    },
+    onPasswordReset: async ({ user }: { user: { email: string } }) => {
+      console.log(`[BetterAuth] Password reset completed for ${user.email}`);
+    },
   },
   secret: process.env.BETTER_AUTH_SECRET || "",
   baseURL: process.env.BETTER_AUTH_URL || "",
