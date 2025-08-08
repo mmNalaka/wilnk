@@ -19,6 +19,8 @@
     "NODE_ENV": "production",
     "CORS_ORIGIN": "*",
     "NEXT_PUBLIC_SERVER_URL": "https://next-cloudflare.nalaka-manathunga.workers.dev",
+    "RUN_MIGRATIONS": "true",
+    "MIGRATION_TARGET": "0000",
     "BETTER_AUTH_URL": "https://next-cloudflare.nalaka-manathunga.workers.dev",
   },
   "d1_databases": [
