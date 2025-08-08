@@ -1,112 +1,165 @@
-# Automatic Database Migrations
+# Database Migrations with Cloudflare D1
 
-This application supports automatic database migrations using environment variables, following industry best practices for production deployments.
+This application uses **Wrangler's built-in D1 migration system** - the industry-standard and recommended approach for Cloudflare D1 with Drizzle ORM.
 
-## Environment Variables
+> **📚 Reference**: [Drizzle ORM Discussion #1388](https://github.com/drizzle-team/drizzle-orm/discussions/1388)  
+> **📖 Official Docs**: [Cloudflare D1 Migrations](https://developers.cloudflare.com/d1/reference/migrations/)
 
-### Required Variables
-- `RUN_MIGRATIONS`: Set to `"true"` to enable automatic migrations on app startup
-- `NODE_ENV`: Environment identifier (`development`, `staging`, `production`)
+## 🏗️ **How It Works**
 
-### Optional Variables
-- `MIGRATION_TARGET`: Specific migration version to run up to (e.g., `"0001"`, `"0002"`)
+1. **Generate Migrations**: Use `drizzle-kit generate` to create SQL migration files
+2. **Configure Wrangler**: Migration directory is already configured in `wrangler.jsonc`
+3. **Apply Migrations**: Use `wrangler d1 migrations apply` to run migrations
+4. **Track State**: Wrangler automatically tracks applied migrations in `d1_migrations` table
 
-## Usage Examples
+## 🚀 **Quick Start**
 
-### Development Environment
+### 1. Generate New Migration
 ```bash
-# Run all migrations automatically
-RUN_MIGRATIONS=true
-NODE_ENV=development
+# After changing your schema files
+pnpm run db:generate
 ```
 
-### Production Environment
+### 2. Check Migration Status
 ```bash
-# Run all migrations automatically in production
-RUN_MIGRATIONS=true
-NODE_ENV=production
+# List unapplied migrations (production)
+pnpm run db:migrations:list
 
-# Run migrations up to a specific version
-RUN_MIGRATIONS=true
-MIGRATION_TARGET=0001
-NODE_ENV=production
+# List unapplied migrations (local)
+pnpm run db:migrations:list:local
 ```
 
-### Staging Environment
+### 3. Apply Migrations
 ```bash
-# Test migrations in staging
-RUN_MIGRATIONS=true
-NODE_ENV=staging
-MIGRATION_TARGET=0002
+# Apply migrations to production database
+pnpm run db:migrations:apply
+
+# Apply migrations to local database
+pnpm run db:migrations:apply:local
 ```
 
-## How It Works
+## 📋 **Available Commands**
 
-1. **Startup Check**: When the application starts, it checks for the `RUN_MIGRATIONS` environment variable
-2. **Migration Execution**: If enabled, migrations run automatically using Drizzle's built-in migration system
-3. **Production Safety**: In production, migration failures will cause the application to exit (fail-fast principle)
-4. **Logging**: Comprehensive logging provides visibility into migration status and results
+| Command | Description |
+|---------|-------------|
+| `pnpm run db:generate` | Generate new migration files from schema changes |
+| `pnpm run db:migrations:list` | List unapplied migrations (production) |
+| `pnpm run db:migrations:apply` | Apply migrations to production database |
+| `pnpm run db:migrations:list:local` | List unapplied migrations (local) |
+| `pnpm run db:migrations:apply:local` | Apply migrations to local database |
 
-## Migration Files
+## 🏭 **Production Deployment Workflow**
 
-Migrations are stored in `src/server/db/migrations/` and follow Drizzle's naming convention:
-- `0000_violet_kitty_pryde.sql`
-- `0001_next_migration.sql`
-- etc.
-
-## Production Deployment Workflow
-
-### Option 1: Deploy with Migrations
+### Option 1: Manual Migration (Recommended)
 ```bash
-# Set environment variables in your deployment platform
-RUN_MIGRATIONS=true
-NODE_ENV=production
+# 1. Deploy your application code first
+pnpm run deploy
 
-# Deploy the application
-# Migrations will run automatically on first startup
+# 2. Apply migrations separately
+pnpm run db:migrations:apply
+
+# 3. Verify migration status
+pnpm run db:migrations:list
 ```
 
-### Option 2: Targeted Migration Deployment
-```bash
-# Run migrations up to a specific version
-RUN_MIGRATIONS=true
-MIGRATION_TARGET=0003
-NODE_ENV=production
-
-# Deploy and verify
-# Then deploy again without migration flags for normal operation
+### Option 2: CI/CD Pipeline
+```yaml
+# Example GitHub Actions workflow
+- name: Apply D1 Migrations
+  run: |
+    npx wrangler d1 migrations apply DB
+  env:
+    CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
 ```
 
-## Safety Features
+## 🔧 **Configuration**
 
-- **Environment Awareness**: Different behavior for development vs production
-- **Fail-Fast**: Production deployments exit on migration failure
-- **Async Execution**: Migrations don't block application startup
-- **Comprehensive Logging**: Clear visibility into migration status
-- **Target Control**: Ability to run migrations up to specific versions
+Your `wrangler.jsonc` is already configured:
 
-## Best Practices
+```json
+{
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "wilnk-dev",
+      "database_id": "07d6adc8-67cf-4cfd-8007-eb666a624be6",
+      "migrations_dir": "./src/server/db/migrations"
+    }
+  ]
+}
+```
 
-1. **Test First**: Always test migrations in development/staging before production
-2. **Backup**: Ensure database backups before running production migrations
-3. **Monitoring**: Monitor application logs during deployment for migration status
-4. **Rollback Plan**: Have a rollback strategy for failed migrations
-5. **Gradual Rollout**: Consider using `MIGRATION_TARGET` for gradual rollouts
+## 📁 **Migration Files**
 
-## Troubleshooting
+Migrations are stored in `src/server/db/migrations/` with Drizzle's naming convention:
+- `0000_violet_kitty_pryde.sql` - Initial schema
+- `0001_next_migration.sql` - Next migration
+- `meta/_journal.json` - Migration metadata
 
-### Migration Fails in Production
-- Check application logs for specific error messages
-- Verify migration files are included in deployment
-- Ensure database permissions are correct
-- Consider manual migration rollback if needed
+## ✅ **Best Practices**
 
-### Migration Doesn't Run
-- Verify `RUN_MIGRATIONS=true` is set
-- Check that migration files exist in `src/server/db/migrations/`
-- Ensure Drizzle configuration is correct
+### 1. **Always Test First**
+```bash
+# Test locally before production
+pnpm run db:migrations:apply:local
+```
 
-### Partial Migration Completion
-- Use `MIGRATION_TARGET` to run specific migrations
-- Check migration table `__drizzle_migrations__` for current state
-- Review migration logs for partial completion details
+### 2. **Check Before Applying**
+```bash
+# Review what will be applied
+pnpm run db:migrations:list
+```
+
+### 3. **Backup Production Data**
+- Ensure you have database backups before applying migrations
+- Consider using D1's export functionality
+
+### 4. **Monitor Application Health**
+- Check application logs after migration
+- Verify database connectivity
+- Test critical application flows
+
+## 🚨 **Troubleshooting**
+
+### Migration Command Fails
+```bash
+# Check Wrangler authentication
+wrangler auth whoami
+
+# Verify database configuration
+wrangler d1 list
+```
+
+### Migration Already Applied Error
+```bash
+# Check current migration status
+pnpm run db:migrations:list
+
+# View migration history
+wrangler d1 execute DB --command "SELECT * FROM d1_migrations"
+```
+
+### Schema Mismatch
+```bash
+# Regenerate migrations after schema changes
+pnpm run db:generate
+
+# Check for conflicting migration files
+ls -la src/server/db/migrations/
+```
+
+## 🔄 **Migration States**
+
+- **Unapplied**: Migration file exists but hasn't been run
+- **Applied**: Migration has been executed and recorded in `d1_migrations` table
+- **Failed**: Migration execution failed (check logs for details)
+
+## 🎯 **Why This Approach?**
+
+✅ **Industry Standard**: Recommended by Drizzle team and Cloudflare  
+✅ **Reliable**: Uses Wrangler's battle-tested migration system  
+✅ **Trackable**: Automatic migration state tracking  
+✅ **Safe**: No runtime file system dependencies  
+✅ **Flexible**: Supports local and production environments  
+
+This approach eliminates the complexity of programmatic migrations in Workers and follows established best practices for D1 database management.
