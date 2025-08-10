@@ -20,6 +20,7 @@
     "CORS_ORIGIN": "*",
     "NEXT_PUBLIC_SERVER_URL": "https://next-cloudflare.nalaka-manathunga.workers.dev",
     "BETTER_AUTH_URL": "https://next-cloudflare.nalaka-manathunga.workers.dev",
+    "NEXT_PUBLIC_DISABLE_SIGNUP": "true"
   },
   "d1_databases": [
     {

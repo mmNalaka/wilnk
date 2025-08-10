@@ -13,6 +13,7 @@ export const auth = betterAuth({
   trustedOrigins: [process.env.CORS_ORIGIN || ""],
   emailAndPassword: {
     enabled: true,
+    disableSignUp: process.env.NEXT_PUBLIC_DISABLE_SIGNUP === "true",
     // Configure password reset flow; integrate your email provider here.
     sendResetPassword: async ({
       user,
