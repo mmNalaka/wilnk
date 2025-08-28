@@ -1,97 +1,272 @@
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
-import { Verified, Instagram, Github, Linkedin } from "lucide-react";
-import Link from "next/link";
+import { PageRenderer } from "@/components/puck/page-renderer";
+import { notFound } from "next/navigation";
 
 type Params = {
   params: Promise<{ slug: string }>;
 };
 
-export default async function Page({ params }: Params) {
+// Mock data service - replace with actual database calls
+const mockPageService = {
+  async getPublishedPageBySlug(slug: string) {
+    // Simulate API call
+    await new Promise(resolve => setTimeout(resolve, 300));
+    
+    // Mock data - replace with actual database query
+    const mockPages: Record<string, any> = {
+      "johndoe": {
+        id: "page-1",
+        title: "John Doe - Links",
+        slug: "johndoe",
+        status: "published",
+        content: {
+          content: [
+            {
+              type: "ProfileHeader",
+              props: {
+                id: "ProfileHeader-1",
+                name: "John Doe",
+                bio: "Creator & Entrepreneur | Building the future one link at a time",
+                avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face",
+                showAvatar: true,
+                avatarSize: "lg",
+                textAlign: "center",
+              },
+            },
+            {
+              type: "Spacer",
+              props: {
+                id: "Spacer-1",
+                height: "lg",
+              },
+            },
+            {
+              type: "SocialLinks",
+              props: {
+                id: "SocialLinks-1",
+                links: [
+                  { platform: "instagram", url: "https://instagram.com/johndoe", username: "@johndoe" },
+                  { platform: "twitter", url: "https://twitter.com/johndoe", username: "@johndoe" },
+                  { platform: "youtube", url: "https://youtube.com/@johndoe", username: "John Doe" },
+                  { platform: "github", url: "https://github.com/johndoe", username: "johndoe" },
+                ],
+                layout: "grid",
+                iconSize: "md",
+                showLabels: false,
+                style: "filled",
+              },
+            },
+            {
+              type: "Spacer",
+              props: {
+                id: "Spacer-2",
+                height: "lg",
+              },
+            },
+            {
+              type: "LinkButton",
+              props: {
+                id: "LinkButton-1",
+                title: "My Portfolio Website",
+                url: "https://johndoe.com",
+                description: "Check out my latest projects and work",
+                icon: "website",
+                style: "filled",
+                size: "md",
+                openInNewTab: true,
+              },
+            },
+            {
+              type: "LinkButton",
+              props: {
+                id: "LinkButton-2",
+                title: "Latest Blog Post",
+                url: "https://johndoe.com/blog/building-with-nextjs",
+                description: "Building Modern Web Apps with Next.js",
+                style: "outlined",
+                size: "md",
+                openInNewTab: true,
+              },
+            },
+            {
+              type: "LinkButton",
+              props: {
+                id: "LinkButton-3",
+                title: "My Course on Web Development",
+                url: "https://course.johndoe.com",
+                description: "Learn to build full-stack applications",
+                style: "filled",
+                size: "md",
+                openInNewTab: true,
+              },
+            },
+            {
+              type: "Spacer",
+              props: {
+                id: "Spacer-3",
+                height: "md",
+              },
+            },
+            {
+              type: "TextBlock",
+              props: {
+                id: "TextBlock-1",
+                content: "Thanks for visiting! Feel free to reach out.",
+                alignment: "center",
+                size: "sm",
+                weight: "normal",
+                color: "muted",
+              },
+            },
+            {
+              type: "LinkButton",
+              props: {
+                id: "LinkButton-4",
+                title: "Contact Me",
+                url: "mailto:john@johndoe.com",
+                icon: "email",
+                style: "minimal",
+                size: "sm",
+                openInNewTab: false,
+              },
+            },
+          ],
+          root: {},
+        },
+        theme: {
+          colors: {
+            primary: "#000000",
+            secondary: "#6B7280",
+            background: "#FFFFFF",
+            text: "#111827",
+          },
+          fonts: {
+            heading: "Inter, sans-serif",
+            body: "Inter, sans-serif",
+          },
+        },
+        analyticsEnabled: true,
+      },
+      "demo": {
+        id: "page-demo",
+        title: "Demo Page - Wilnk",
+        slug: "demo",
+        status: "published",
+        content: {
+          content: [
+            {
+              type: "ProfileHeader",
+              props: {
+                id: "ProfileHeader-demo",
+                name: "Wilnk Demo",
+                bio: "This is a demo Link-in-Bio page built with Puck editor",
+                avatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&h=150&fit=crop&crop=face",
+                showAvatar: true,
+                avatarSize: "md",
+                textAlign: "center",
+              },
+            },
+            {
+              type: "Spacer",
+              props: {
+                id: "Spacer-demo-1",
+                height: "md",
+              },
+            },
+            {
+              type: "LinkButton",
+              props: {
+                id: "LinkButton-demo-1",
+                title: "Create Your Own Page",
+                url: "/dashboard",
+                description: "Start building your Link-in-Bio page",
+                style: "filled",
+                size: "md",
+                openInNewTab: false,
+              },
+            },
+            {
+              type: "LinkButton",
+              props: {
+                id: "LinkButton-demo-2",
+                title: "View Editor Demo",
+                url: "/editor/demo",
+                description: "See how easy it is to edit",
+                style: "outlined",
+                size: "md",
+                openInNewTab: true,
+              },
+            },
+            {
+              type: "Spacer",
+              props: {
+                id: "Spacer-demo-2",
+                height: "lg",
+              },
+            },
+            {
+              type: "TextBlock",
+              props: {
+                id: "TextBlock-demo",
+                content: "Built with Puck editor and Next.js",
+                alignment: "center",
+                size: "sm",
+                weight: "medium",
+                color: "muted",
+              },
+            },
+          ],
+          root: {},
+        },
+        theme: {
+          colors: {
+            primary: "#3B82F6",
+            secondary: "#6B7280",
+            background: "#F8FAFC",
+            text: "#1E293B",
+          },
+          fonts: {
+            heading: "Inter, sans-serif",
+            body: "Inter, sans-serif",
+          },
+        },
+        analyticsEnabled: true,
+      },
+    };
+
+    return mockPages[slug] || null;
+  },
+};
+
+export async function generateMetadata({ params }: Params) {
   const { slug } = await params;
+  const page = await mockPageService.getPublishedPageBySlug(slug);
+  
+  if (!page) {
+    return {
+      title: "Page Not Found",
+    };
+  }
+
+  return {
+    title: page.title,
+    description: page.content.content.find((block: any) => block.type === "ProfileHeader")?.props?.bio || `${page.title} - Link in Bio`,
+  };
+}
+
+export default async function PublicPage({ params }: Params) {
+  const { slug } = await params;
+  const page = await mockPageService.getPublishedPageBySlug(slug);
+
+  if (!page || page.status !== "published") {
+    notFound();
+  }
 
   return (
-    <div className="bg-amber-50">
-      <div className="mx-auto flex h-screen w-lg flex-col">
-        <div className="mt-10 flex grow flex-col items-center">
-          <div className="flex flex-col gap-2">
-            <Avatar className="size-24">
-              <AvatarImage src="https://avatars.githubusercontent.com/u/18021829?v=4" />
-              <AvatarFallback>NA</AvatarFallback>
-            </Avatar>
-            <h1 className="font-bold text-2xl">
-              @{slug} <Verified fill="#256edb" className="inline text-white" />
-            </h1>
-          </div>
-
-          <div className="mt-6">
-            <p className="text-center font-medium text-lg">
-              Explore some of the best link-in-bio pages created by the Linky
-              community.
-            </p>
-          </div>
-
-          <div className="mt-10 flex w-full flex-col gap-4">
-            <Button
-              asChild
-              className="w-full bg-gradient-to-r from-purple-500 via-pink-500 to-orange-500 text-white hover:from-purple-600 hover:via-pink-600 hover:to-orange-600"
-              size="lg"
-              variant="default"
-            >
-              <Link
-                href={`https://instagram.com/${slug}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center justify-center gap-2"
-              >
-                <Instagram size={20} />
-                Follow on Instagram
-              </Link>
-            </Button>
-
-            {/* Github Link */}
-            <Button
-              asChild
-              className="w-full bg-[#24292e] text-white hover:bg-[#2b3137]"
-              size="lg"
-              variant="default"
-            >
-              <Link
-                href={`https://github.com/${slug}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center justify-center gap-2"
-              >
-                <Github size={20} />
-                Follow on GitHub
-              </Link>
-            </Button>
-
-            {/* LinkedIn Link */}
-            <Button
-              asChild
-              className="w-full bg-[#0077b5] text-white hover:bg-[#006699]"
-              size="lg"
-              variant="default"
-            >
-              <Link
-                href={`https://linkedin.com/in/${slug}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center justify-center gap-2"
-              >
-                <Linkedin size={20} />
-                Connect on LinkedIn
-              </Link>
-            </Button>
-          </div>
-        </div>
-        <div className="mt-10">
-          <p className="pb-2 text-center text-muted-foreground text-sm">
-            Powered by <span className="font-bold">Wilnk</span>
-          </p>
-        </div>
-      </div>
-    </div>
+    <PageRenderer 
+      data={page.content} 
+      pageId={page.id}
+      theme={page.theme}
+      className="bg-gray-50"
+    />
   );
 }

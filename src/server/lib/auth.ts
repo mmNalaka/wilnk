@@ -7,13 +7,12 @@ import * as schema from "@/server/db/schema/auth.schema";
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
     provider: "sqlite",
-
     schema: schema,
   }),
   trustedOrigins: [process.env.CORS_ORIGIN || ""],
   emailAndPassword: {
     enabled: true,
-    disableSignUp: process.env.NEXT_PUBLIC_DISABLE_SIGNUP === "true",
+    // disableSignUp: process.env.NEXT_PUBLIC_DISABLE_SIGNUP === "true",
     // Configure password reset flow; integrate your email provider here.
     sendResetPassword: async ({
       user,

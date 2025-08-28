@@ -1,26 +1,16 @@
 import { sqliteTable, text, integer, index } from "drizzle-orm/sqlite-core";
+import { user } from "./auth.schema";
 
-// Users table
-export const users = sqliteTable("users", {
-  id: text("id").primaryKey(),
-  email: text("email").notNull().unique(),
-  username: text("username").unique(),
-  displayName: text("display_name"),
-  avatar: text("avatar"),
-  plan: text("plan").notNull().default("free"), // free, pro, enterprise
-  createdAt: integer("created_at", { mode: "timestamp" }).notNull(),
-  updatedAt: integer("updated_at", { mode: "timestamp" }).notNull(),
-});
 
 // Pages table - stores page data structure
 export const pages = sqliteTable("pages", {
   id: text("id").primaryKey(),
-  userId: text("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  userId: text("user_id").notNull().references(() => user.id, { onDelete: "cascade" }),
   title: text("title").notNull(),
   slug: text("slug").notNull().unique(),
   description: text("description"),
   content: text("content", { mode: "json" }).notNull().default('{}'),
-  themeId: text("theme_id").references(() => themes.id),
+  themeId: text("theme_id").references(() => themes.id, { onDelete: "set null" }),
   metaTitle: text("meta_title"),
   metaDescription: text("meta_description"),
   favicon: text("favicon"),
@@ -41,7 +31,7 @@ export const themes = sqliteTable("themes", {
   id: text("id").primaryKey(),
   name: text("name").notNull(),
   description: text("description"),
-  createdBy: text("created_by").references(() => users.id),
+  createdBy: text("created_by").references(() => user.id),
   config: text("config", { mode: "json" }).notNull().default('{}'),
   preview: text("preview"),
   isPublic: integer("is_public", { mode: "boolean" }).notNull().default(false),
@@ -56,7 +46,7 @@ export const blockTemplates = sqliteTable("block_templates", {
   id: text("id").primaryKey(),
   name: text("name").notNull(),
   description: text("description"),
-  createdBy: text("created_by").references(() => users.id),
+  createdBy: text("created_by").references(() => user.id),
   type: text("type").notNull(),
   config: text("config", { mode: "json" }).notNull(),
   defaultProps: text("default_props", { mode: "json" }).notNull().default('{}'),
@@ -144,7 +134,7 @@ export const pageViews = sqliteTable("page_views", {
 // User subscriptions/plans
 export const subscriptions = sqliteTable("subscriptions", {
   id: text("id").primaryKey(),
-  userId: text("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  userId: text("user_id").notNull().references(() => user.id, { onDelete: "cascade" }),
   plan: text("plan").notNull(),
   status: text("status").notNull(),
   stripeCustomerId: text("stripe_customer_id"),

@@ -1,6 +1,5 @@
 import { relations } from "drizzle-orm";
 import {
-  users,
   pages,
   themes,
   blockTemplates,
@@ -9,22 +8,23 @@ import {
   pageViews,
   subscriptions,
 } from "./main.schema";
+import { user } from "./auth.schema";
 
 // Database Relations
-export const usersRelations = relations(users, ({ many, one }) => ({
+export const usersRelations = relations(user, ({ many, one }) => ({
   pages: many(pages),
   themes: many(themes),
   blockTemplates: many(blockTemplates),
   subscription: one(subscriptions, {
-    fields: [users.id],
+    fields: [user.id],
     references: [subscriptions.userId],
   }),
 }));
 
 export const pagesRelations = relations(pages, ({ one, many }) => ({
-  user: one(users, {
+  user: one(user, {
     fields: [pages.userId],
-    references: [users.id],
+    references: [user.id],
   }),
   theme: one(themes, {
     fields: [pages.themeId],
@@ -36,17 +36,17 @@ export const pagesRelations = relations(pages, ({ one, many }) => ({
 }));
 
 export const themesRelations = relations(themes, ({ one, many }) => ({
-  creator: one(users, {
+  creator: one(user, {
     fields: [themes.createdBy],
-    references: [users.id],
+    references: [user.id],
   }),
   pages: many(pages),
 }));
 
 export const blockTemplatesRelations = relations(blockTemplates, ({ one }) => ({
-  creator: one(users, {
+  creator: one(user, {
     fields: [blockTemplates.createdBy],
-    references: [users.id],
+    references: [user.id],
   }),
 }));
 
@@ -72,8 +72,8 @@ export const pageViewsRelations = relations(pageViews, ({ one }) => ({
 }));
 
 export const subscriptionsRelations = relations(subscriptions, ({ one }) => ({
-  user: one(users, {
+  user: one(user, {
     fields: [subscriptions.userId],
-    references: [users.id],
+    references: [user.id],
   }),
 }));
