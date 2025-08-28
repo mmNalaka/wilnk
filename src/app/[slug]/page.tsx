@@ -3,7 +3,7 @@ import { PageRenderer } from "@/components/puck/page-renderer";
 import { notFound } from "next/navigation";
 import { db } from "@/server/db";
 import { pages, themes } from "@/server/db/schema/main.schema";
-import { eq, and, ne } from "drizzle-orm";
+import { eq, and } from "drizzle-orm";
 import type { Data } from "@measured/puck";
 
 type Params = {
