@@ -31,14 +31,17 @@ class AnalyticsService {
     return visitorId;
   }
 
-  private async getLocationData() {
+  private async getLocationData(): Promise<{ country: string; city: string }> {
     try {
       // Use a free IP geolocation service
       const response = await fetch('https://ipapi.co/json/');
-      const data = await response.json();
+      const data = (await response.json()) as {
+        country_name?: string;
+        city?: string;
+      };
       return {
-        country: data.country_name || 'Unknown',
-        city: data.city || 'Unknown',
+        country: data?.country_name ?? 'Unknown',
+        city: data?.city ?? 'Unknown',
       };
     } catch (error) {
       console.warn('Failed to get location data:', error);
