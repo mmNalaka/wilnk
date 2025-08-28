@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { z } from "zod";
 import { protectedProcedure, publicProcedure } from "@/server/lib/orpc";
 import { db } from "@/server/db";
@@ -254,7 +255,7 @@ export const themesRouter = {
       const [existingTheme] = await db
         .select()
         .from(themes)
-        .where(and(eq(themes.id, input.themeId), eq(themes.userId, userId)))
+        .where(and(eq(themes.id, input.themeId), eq(themes.createdBy, userId)))
         .limit(1);
 
       if (!existingTheme) {

@@ -40,7 +40,7 @@ interface AnalyticsData {
 
 // Mock analytics service
 const mockAnalyticsService = {
-  async getAnalytics(timeRange: string): Promise<AnalyticsData> {
+  async getAnalytics(): Promise<AnalyticsData> {
     // Simulate API delay
     await new Promise(resolve => setTimeout(resolve, 1000));
     
@@ -114,7 +114,7 @@ export default function AnalyticsPage() {
   const loadAnalytics = async () => {
     setLoading(true);
     try {
-      const data = await mockAnalyticsService.getAnalytics(timeRange);
+      const data = await mockAnalyticsService.getAnalytics();
       setAnalytics(data);
     } catch (error) {
       console.error("Failed to load analytics:", error);

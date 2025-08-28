@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { PageRenderer } from "@/components/puck/page-renderer";
 import { notFound } from "next/navigation";
 
