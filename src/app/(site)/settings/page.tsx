@@ -161,11 +161,7 @@ export default function SettingsPage() {
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="flex items-center gap-4">
-            <img
-              src={settings.avatar}
-              alt="Avatar"
-              className="w-16 h-16 rounded-full object-cover"
-            />
+
             <div className="flex-1">
               <Label htmlFor="avatar">Avatar URL</Label>
               <Input
