@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { PuckData, ThemeConfig } from "@/types/types";
 
 // Base page schema matching database structure
 export const pageDbSchema = z.object({
@@ -7,7 +8,7 @@ export const pageDbSchema = z.object({
   title: z.string(),
   slug: z.string(),
   description: z.string().nullable(),
-  content: z.any(), // JSON field for Puck data
+  content: z.custom<PuckData>(), // JSON field for Puck data
   themeId: z.string().nullable(),
   metaTitle: z.string().nullable(),
   metaDescription: z.string().nullable(),
@@ -28,7 +29,7 @@ export const pageSchema = z.object({
   title: z.string(),
   slug: z.string(),
   description: z.string().nullable(),
-  puckData: z.any(), // Renamed from content for frontend compatibility
+  content: z.custom<PuckData>(), // JSON field for Puck data
   themeId: z.string().nullable(),
   metaTitle: z.string().nullable(),
   metaDescription: z.string().nullable(),
@@ -48,7 +49,7 @@ export const themeSchema = z.object({
   name: z.string(),
   description: z.string().nullable(),
   createdBy: z.string().nullable(),
-  config: z.any(),
+  config: z.custom<ThemeConfig>(),
   preview: z.string().nullable(),
   isPublic: z.boolean(),
   isSystem: z.boolean(),
@@ -71,7 +72,7 @@ export const createPageInputSchema = z.object({
 export const updatePageInputSchema = z.object({
   title: z.string().optional(),
   description: z.string().optional(),
-  content: z.any().optional(),
+  content: z.custom<PuckData>().optional(),
   themeId: z.string().optional(),
   status: z.string().optional(),
   isPublic: z.boolean().optional(),

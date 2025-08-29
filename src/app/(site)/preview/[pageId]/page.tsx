@@ -33,7 +33,7 @@ export default function PreviewPage() {
 
   return (
     <PageRenderer 
-      data={pageData.page.puckData} 
+      data={pageData.page.content} 
       theme={undefined} 
       className="bg-gray-50"
     />

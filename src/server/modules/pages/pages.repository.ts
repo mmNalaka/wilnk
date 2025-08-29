@@ -2,9 +2,11 @@ import { db } from "@/server/db";
 import { pages, themes } from "@/server/db/schema/main.schema";
 import { eq, and, desc } from "drizzle-orm";
 import { nanoid } from "nanoid";
+import { PuckData } from "@/types/types";
 import type { CreatePageInput, UpdatePageInput, Page, PageListItem, PageWithTheme } from "./pages.schemas";
-import type { DbPage, DbPageWithTheme } from "./pages.service";
-import { transformDbPageToApi, transformDbPageWithThemeToApi } from "./pages.service";
+import { pagesAnalytics } from "./pages.analytics";
+import { generateSlug, generateDuplicateSlug, isPagePublished } from "./pages.utils";
+import { PageNotFoundError } from "./pages.errors";
 
 export class PagesRepository {
   /**
@@ -30,13 +32,20 @@ export class PagesRepository {
       .where(eq(pages.userId, userId))
       .orderBy(desc(pages.updatedAt));
 
+    // Get analytics for all pages
+    const pageIds = userPages.map(p => p.id);
+    const analytics = await pagesAnalytics.getAnalyticsForPages(pageIds);
+
     // Transform to include computed fields
-    return userPages.map((page) => ({
-      ...page,
-      isPublished: page.status === "published" || !!page.publishedAt,
-      viewCount: 0, // TODO: Calculate from analytics
-      clickCount: 0, // TODO: Calculate from analytics
-    }));
+    return userPages.map((page) => {
+      const pageAnalytics = analytics.get(page.id) || { viewCount: 0, clickCount: 0 };
+      return {
+        ...page,
+        isPublished: isPagePublished(page.status, page.publishedAt),
+        viewCount: pageAnalytics.viewCount,
+        clickCount: pageAnalytics.clickCount,
+      };
+    });
   }
 
   /**
@@ -49,7 +58,7 @@ export class PagesRepository {
       .where(and(eq(pages.id, pageId), eq(pages.userId, userId)))
       .limit(1);
 
-    return page ? transformDbPageToApi(page as DbPage) : null;
+    return page ? page as Page : null;
   }
 
   /**
@@ -102,26 +111,18 @@ export class PagesRepository {
 
     if (!result) return null;
 
-    const dbPageWithTheme: DbPageWithTheme = {
+    return {
       ...result,
+      content: result.content as PuckData,
       theme: result.theme?.id ? result.theme : null,
-    };
-
-    return transformDbPageWithThemeToApi(dbPageWithTheme);
+    } as PageWithTheme;
   }
 
   /**
    * Create a new page
    */
   async create(userId: string, input: CreatePageInput): Promise<Page> {
-    // Generate unique slug
-    const baseSlug = input.title
-      ? input.title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "")
-      : "";
-
-    const slug = input.title
-      ? `${baseSlug}-${nanoid(6)}`
-      : nanoid(6);
+    const slug = generateSlug(input.title);
 
     const newPage = {
       id: nanoid(),
@@ -151,7 +152,7 @@ export class PagesRepository {
       .values(newPage)
       .returning();
 
-    return transformDbPageToApi(createdPage as DbPage);
+    return createdPage as Page;
   }
 
   /**
@@ -184,7 +185,7 @@ export class PagesRepository {
       .where(eq(pages.id, pageId))
       .returning();
 
-    return transformDbPageToApi(updatedPage as DbPage);
+    return updatedPage as Page;
   }
 
   /**
@@ -218,12 +219,11 @@ export class PagesRepository {
       .limit(1);
 
     if (!originalPage) {
-      throw new Error("Page not found");
+      throw new PageNotFoundError();
     }
 
     // Generate unique slug for duplicate
-    const baseSlug = originalPage.slug.replace(/-[a-zA-Z0-9]{6}$/, "");
-    const newSlug = `${baseSlug}-copy-${nanoid(6)}`;
+    const newSlug = generateDuplicateSlug(originalPage.slug);
 
     const duplicatedPage = {
       id: nanoid(),
@@ -250,7 +250,7 @@ export class PagesRepository {
       .values(duplicatedPage)
       .returning();
 
-    return transformDbPageToApi(createdPage as DbPage);
+    return createdPage as Page;
   }
 
   /**

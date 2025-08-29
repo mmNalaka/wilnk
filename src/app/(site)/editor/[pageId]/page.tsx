@@ -86,7 +86,7 @@ export default function EditorPage() {
   // Main render
   return (
     <PageEditor
-      initialData={pageData?.page?.puckData}
+      initialData={pageData?.page?.content}
       onSave={handleSave}
       onPreview={handlePreview}
       onPublish={handlePublish}
