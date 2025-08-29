@@ -52,6 +52,7 @@ export default function EditorPage() {
       data: {
         content,
         publishedAt: new Date(),
+        status: "published",
       },
     });
   };

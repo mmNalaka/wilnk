@@ -1,6 +1,6 @@
 import { db } from "@/server/db";
 import { pages, themes } from "@/server/db/schema/main.schema";
-import { eq, and, desc } from "drizzle-orm";
+import { eq, and, desc, or } from "drizzle-orm";
 import { nanoid } from "nanoid";
 import { PuckData } from "@/types/types";
 import type { CreatePageInput, UpdatePageInput, Page, PageListItem, PageWithTheme } from "./pages.schemas";
@@ -102,7 +102,7 @@ export class PagesRepository {
       .leftJoin(themes, eq(pages.themeId, themes.id))
       .where(
         and(
-          eq(pages.slug, slug),
+          or(eq(pages.slug, slug), eq(pages.id, slug)),
           eq(pages.status, "published"),
           eq(pages.isPublic, true)
         )
