@@ -36,6 +36,13 @@
       "when": 1755721782147,
       "tag": "0004_fix-user-schema",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "6",
+      "when": 1756672966697,
+      "tag": "0005_theme-updates",
+      "breakpoints": true
     }
   ]
 }

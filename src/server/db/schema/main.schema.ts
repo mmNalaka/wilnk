@@ -33,10 +33,8 @@ export const themes = sqliteTable("themes", {
   description: text("description"),
   createdBy: text("created_by").references(() => user.id),
   config: text("config", { mode: "json" }).notNull().default('{}'),
-  preview: text("preview"),
-  isPublic: integer("is_public", { mode: "boolean" }).notNull().default(false),
   isSystem: integer("is_system", { mode: "boolean" }).notNull().default(false),
-  status: text("status").notNull().default("draft"),
+  status: text("status").notNull().default("active"),
   createdAt: integer("created_at", { mode: "timestamp" }).notNull(),
   updatedAt: integer("updated_at", { mode: "timestamp" }).notNull(),
 });
