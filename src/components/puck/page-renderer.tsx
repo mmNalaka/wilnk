@@ -53,7 +53,7 @@ export const PageRenderer = ({ data, pageId, className, theme }: PageRendererPro
       }}
     >
       {pageId && <AnalyticsTracker pageId={pageId} />}
-      <div className="max-w-md mx-auto px-4 py-8">
+      <div className="max-w-md mx-auto px-4 py-4">
         <Render config={puckConfig} data={data} />
       </div>
     </div>

@@ -9,6 +9,9 @@ import { spacerConfig } from "./blocks/spacer";
 import { imageBlockConfig } from "./blocks/image-block";
 
 export const puckConfig: Config = {
+  root: {
+    render: ({ children }: { children: React.ReactNode }) => <div className="max-w-md mx-auto px-4 py-4">{children}</div>,
+  },
   components: {
     ProfileHeader: profileHeaderConfig,
     LinkButton: linkButtonConfig,
