@@ -11,22 +11,23 @@ export interface ImageBlockProps {
   size: "sm" | "md" | "lg" | "full" | "cover";
   borderRadius: "none" | "sm" | "md" | "lg" | "full";
   alignment: "left" | "center" | "right";
+  className?: string;
 }
 
-export const ImageBlock = ({ src, alt, caption, size, borderRadius, alignment }: ImageBlockProps) => {
+export const ImageBlock = ({ src, alt, caption, size, borderRadius, alignment, className }: ImageBlockProps) => {
   return (
     <div className={cn("w-full", {
       "flex justify-start": alignment === "left",
       "flex justify-center": alignment === "center",
       "flex justify-end": alignment === "right",
-    })}>
+    }, className)}>
       <div className={cn("flex flex-col gap-2", {
         "w-32": size === "sm",
         "w-48": size === "md",
         "w-64": size === "lg",
         "w-full": size === "full" || size === "cover",
       })}>
-        <div className={cn("relative overflow-hidden bg-gray-200", {
+        <div className={cn("relative overflow-hidden bg-muted", {
           "aspect-square": size === "sm" || size === "md" || size === "lg",
           "aspect-video": size === "full",
           "aspect-[3/1]": size === "cover",
@@ -45,7 +46,7 @@ export const ImageBlock = ({ src, alt, caption, size, borderRadius, alignment }:
         </div>
         
         {caption && (
-          <p className="text-sm text-gray-600 text-center">
+          <p className="text-sm text-muted-foreground text-center">
             {caption}
           </p>
         )}
@@ -98,6 +99,10 @@ export const imageBlockConfig: ComponentConfig<ImageBlockProps> = {
         { label: "Center", value: "center" },
         { label: "Right", value: "right" },
       ],
+    },
+    className: {
+      type: "text",
+      label: "ClassName (advanced)",
     },
   },
   defaultProps: {

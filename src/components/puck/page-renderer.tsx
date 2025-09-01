@@ -25,22 +25,30 @@ interface PageRendererProps {
 }
 
 export const PageRenderer = ({ data, pageId, className, theme }: PageRendererProps) => {
-  const customStyles = theme ? {
-    '--color-primary': theme.colors?.primary || '#000000',
-    '--color-secondary': theme.colors?.secondary || '#6B7280',
-    '--color-background': theme.colors?.background || '#FFFFFF',
-    '--color-text': theme.colors?.text || '#111827',
-    '--font-heading': theme.fonts?.heading || 'Inter, sans-serif',
-    '--font-body': theme.fonts?.body || 'Inter, sans-serif',
-  } as React.CSSProperties : {};
+  type CSSVarKey =
+    | "--color-primary"
+    | "--color-secondary"
+    | "--color-background"
+    | "--color-text"
+    | "--font-heading"
+    | "--font-body";
+
+  const cssVars: Partial<Record<CSSVarKey, string>> = {};
+  if (theme?.colors?.primary) cssVars["--color-primary"] = theme.colors.primary;
+  if (theme?.colors?.secondary) cssVars["--color-secondary"] = theme.colors.secondary;
+  if (theme?.colors?.background) cssVars["--color-background"] = theme.colors.background;
+  if (theme?.colors?.text) cssVars["--color-text"] = theme.colors.text;
+  if (theme?.fonts?.heading) cssVars["--font-heading"] = theme.fonts.heading;
+  if (theme?.fonts?.body) cssVars["--font-body"] = theme.fonts.body;
+  const customStyles = cssVars as React.CSSProperties;
 
   return (
     <div 
-      className={cn("min-h-screen w-full", className)}
+      className={cn("min-h-screen w-full bg-background text-foreground", className)}
       style={{
-        backgroundColor: theme?.colors?.background || '#FFFFFF',
-        color: theme?.colors?.text || '#111827',
-        fontFamily: theme?.fonts?.body || 'Inter, sans-serif',
+        ...(theme?.colors?.background ? { backgroundColor: theme.colors.background } : {}),
+        ...(theme?.colors?.text ? { color: theme.colors.text } : {}),
+        ...(theme?.fonts?.body ? { fontFamily: theme.fonts.body } : {}),
         ...customStyles,
       }}
     >

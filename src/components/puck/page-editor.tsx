@@ -53,11 +53,11 @@ export const PageEditor = ({
   return (
     <div className="h-screen flex flex-col">
       {/* Header */}
-      <div className="border-b bg-white px-4 py-3 flex items-center justify-between">
+      <div className="border-b bg-background px-4 py-3 flex items-center justify-between">
         <div className="flex items-center gap-4">
           <h1 className="text-lg font-semibold">Page Editor</h1>
           {pageId && (
-            <span className="text-sm text-gray-500">ID: {pageId}</span>
+            <span className="text-sm text-muted-foreground">ID: {pageId}</span>
           )}
         </div>
         
@@ -85,7 +85,7 @@ export const PageEditor = ({
       </div>
 
       {/* Puck Editor */}
-      <div className="flex-1">
+      <div className="flex-1 bg-background">
         <Puck
           config={puckConfig}
           data={data}

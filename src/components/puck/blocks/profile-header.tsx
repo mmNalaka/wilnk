@@ -11,17 +11,18 @@ export interface ProfileHeaderProps {
   showAvatar: boolean;
   avatarSize: "sm" | "md" | "lg";
   textAlign: "left" | "center" | "right";
+  className?: string;
 }
 
-export const ProfileHeader = ({ name, bio, avatar, showAvatar, avatarSize, textAlign }: ProfileHeaderProps) => {
+export const ProfileHeader = ({ name, bio, avatar, showAvatar, avatarSize, textAlign, className }: ProfileHeaderProps) => {
   return (
     <div className={cn("w-full flex flex-col items-center gap-4", {
       "text-left items-start": textAlign === "left",
       "text-center items-center": textAlign === "center", 
       "text-right items-end": textAlign === "right",
-    })}>
+    }, className)}>
       {showAvatar && avatar && (
-        <div className={cn("relative rounded-full overflow-hidden bg-gray-200", {
+        <div className={cn("relative rounded-full overflow-hidden bg-muted", {
           "w-16 h-16": avatarSize === "sm",
           "w-24 h-24": avatarSize === "md",
           "w-32 h-32": avatarSize === "lg",
@@ -36,7 +37,7 @@ export const ProfileHeader = ({ name, bio, avatar, showAvatar, avatarSize, textA
       )}
       
       <div className="space-y-2">
-        <h1 className={cn("font-bold text-gray-900", {
+        <h1 className={cn("font-bold text-foreground", {
           "text-xl": avatarSize === "sm",
           "text-2xl": avatarSize === "md", 
           "text-3xl": avatarSize === "lg",
@@ -45,7 +46,7 @@ export const ProfileHeader = ({ name, bio, avatar, showAvatar, avatarSize, textA
         </h1>
         
         {bio && (
-          <p className="text-gray-600 leading-relaxed max-w-md">
+          <p className="text-muted-foreground leading-relaxed max-w-md">
             {bio}
           </p>
         )}
@@ -93,6 +94,10 @@ export const profileHeaderConfig: ComponentConfig<ProfileHeaderProps> = {
         { label: "Center", value: "center" },
         { label: "Right", value: "right" },
       ],
+    },
+    className: {
+      type: "text",
+      label: "ClassName (advanced)",
     },
   },
   defaultProps: {

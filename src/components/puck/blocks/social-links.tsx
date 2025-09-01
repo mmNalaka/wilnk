@@ -16,24 +16,25 @@ export interface SocialLinksProps {
   iconSize: "sm" | "md" | "lg";
   showLabels: boolean;
   style: "filled" | "outlined" | "minimal";
+  className?: string;
 }
 
 const socialPlatforms = {
-  instagram: { icon: Instagram, color: "bg-gradient-to-r from-purple-500 to-pink-500", name: "Instagram" },
-  twitter: { icon: Twitter, color: "bg-blue-500", name: "Twitter" },
-  youtube: { icon: Youtube, color: "bg-red-500", name: "YouTube" },
-  github: { icon: Github, color: "bg-gray-800", name: "GitHub" },
-  linkedin: { icon: Linkedin, color: "bg-blue-600", name: "LinkedIn" },
-  facebook: { icon: Facebook, color: "bg-blue-600", name: "Facebook" },
-  email: { icon: Mail, color: "bg-gray-600", name: "Email" },
-  phone: { icon: Phone, color: "bg-green-500", name: "Phone" },
-  website: { icon: Globe, color: "bg-gray-700", name: "Website" },
+  instagram: { icon: Instagram, name: "Instagram" },
+  twitter: { icon: Twitter, name: "Twitter" },
+  youtube: { icon: Youtube, name: "YouTube" },
+  github: { icon: Github, name: "GitHub" },
+  linkedin: { icon: Linkedin, name: "LinkedIn" },
+  facebook: { icon: Facebook, name: "Facebook" },
+  email: { icon: Mail, name: "Email" },
+  phone: { icon: Phone, name: "Phone" },
+  website: { icon: Globe, name: "Website" },
 };
 
-export const SocialLinks = ({ links, layout, iconSize, showLabels, style }: SocialLinksProps) => {
+export const SocialLinks = ({ links, layout, iconSize, showLabels, style, className }: SocialLinksProps) => {
   if (!links || links.length === 0) {
     return (
-      <div className="text-center text-gray-500 py-8">
+      <div className="text-center text-muted-foreground py-8">
         Add your social media links
       </div>
     );
@@ -50,7 +51,7 @@ export const SocialLinks = ({ links, layout, iconSize, showLabels, style }: Soci
     <div className={cn("w-full", {
       "flex flex-wrap justify-center gap-4": layout === "grid",
       "flex flex-col space-y-3": layout === "row",
-    })}>
+    }, className)}>
       {links.map((link, index) => {
         const platform = socialPlatforms[link.platform as keyof typeof socialPlatforms];
         if (!platform) return null;
@@ -74,12 +75,13 @@ export const SocialLinks = ({ links, layout, iconSize, showLabels, style }: Soci
               },
               // Style variants
               {
-                [`${platform.color} text-white rounded-full`]: style === "filled" && !showLabels,
-                [`${platform.color} text-white rounded-lg`]: style === "filled" && showLabels,
-                "border-2 text-gray-700 hover:bg-gray-50 rounded-full": style === "outlined" && !showLabels,
-                "border-2 text-gray-700 hover:bg-gray-50 rounded-lg": style === "outlined" && showLabels,
-                "text-gray-700 hover:bg-gray-100 rounded-full": style === "minimal" && !showLabels,
-                "text-gray-700 hover:bg-gray-100 rounded-lg": style === "minimal" && showLabels,
+                // Use shadcn tokens so theme changes apply automatically
+                "bg-primary text-primary-foreground rounded-full": style === "filled" && !showLabels,
+                "bg-primary text-primary-foreground rounded-lg": style === "filled" && showLabels,
+                "border text-foreground hover:bg-accent hover:text-accent-foreground rounded-full": style === "outlined" && !showLabels,
+                "border text-foreground hover:bg-accent hover:text-accent-foreground rounded-lg": style === "outlined" && showLabels,
+                "text-foreground hover:bg-accent hover:text-accent-foreground rounded-full": style === "minimal" && !showLabels,
+                "text-foreground hover:bg-accent hover:text-accent-foreground rounded-lg": style === "minimal" && showLabels,
               },
               // Layout specific
               {
@@ -175,6 +177,10 @@ export const socialLinksConfig: ComponentConfig<SocialLinksProps> = {
         { label: "Outlined", value: "outlined" },
         { label: "Minimal", value: "minimal" },
       ],
+    },
+    className: {
+      type: "text",
+      label: "ClassName (advanced)",
     },
   },
   defaultProps: {

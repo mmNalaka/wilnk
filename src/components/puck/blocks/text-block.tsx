@@ -9,15 +9,16 @@ export interface TextBlockProps {
   size: "sm" | "md" | "lg" | "xl";
   weight: "normal" | "medium" | "semibold" | "bold";
   color: "default" | "muted" | "accent";
+  className?: string;
 }
 
-export const TextBlock = ({ content, alignment, size, weight, color }: TextBlockProps) => {
+export const TextBlock = ({ content, alignment, size, weight, color, className }: TextBlockProps) => {
   return (
     <div className={cn("w-full", {
       "text-left": alignment === "left",
       "text-center": alignment === "center",
       "text-right": alignment === "right",
-    })}>
+    }, className)}>
       <p className={cn("leading-relaxed", {
         // Size variants
         "text-sm": size === "sm",
@@ -30,9 +31,9 @@ export const TextBlock = ({ content, alignment, size, weight, color }: TextBlock
         "font-semibold": weight === "semibold",
         "font-bold": weight === "bold",
         // Color variants
-        "text-gray-900": color === "default",
-        "text-gray-600": color === "muted",
-        "text-blue-600": color === "accent",
+        "text-foreground": color === "default",
+        "text-muted-foreground": color === "muted",
+        "text-primary": color === "accent",
       })}>
         {content}
       </p>
@@ -83,6 +84,10 @@ export const textBlockConfig: ComponentConfig<TextBlockProps> = {
         { label: "Muted", value: "muted" },
         { label: "Accent", value: "accent" },
       ],
+    },
+    className: {
+      type: "text",
+      label: "ClassName (advanced)",
     },
   },
   defaultProps: {

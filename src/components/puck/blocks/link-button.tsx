@@ -3,6 +3,7 @@
 import { ComponentConfig } from "@measured/puck";
 import { ExternalLink, Instagram, Twitter, Youtube, Github, Linkedin, Mail, Phone, Globe } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 
 export interface LinkButtonProps {
   title: string;
@@ -12,6 +13,7 @@ export interface LinkButtonProps {
   style: "filled" | "outlined" | "minimal";
   size: "sm" | "md" | "lg";
   openInNewTab: boolean;
+  className?: string;
 }
 
 const iconMap = {
@@ -26,7 +28,7 @@ const iconMap = {
   external: ExternalLink,
 };
 
-export const LinkButton = ({ title, url, description, icon, style, size, openInNewTab }: LinkButtonProps) => {
+export const LinkButton = ({ title, url, description, icon, style, size, openInNewTab, className }: LinkButtonProps) => {
   const IconComponent = icon && iconMap[icon as keyof typeof iconMap] ? iconMap[icon as keyof typeof iconMap] : null;
 
   const handleClick = () => {
@@ -48,31 +50,26 @@ export const LinkButton = ({ title, url, description, icon, style, size, openInN
   };
 
   return (
-    <button
+    <Button
       onClick={handleClick}
+      variant={
+        style === "filled" ? "default" : style === "outlined" ? "outline" : "ghost"
+      }
+      size={size === "sm" ? "sm" : size === "lg" ? "lg" : "default"}
       className={cn(
-        "w-full flex items-center justify-center gap-3 rounded-lg transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]",
-        // Size variants
-        {
-          "px-4 py-3 text-sm": size === "sm",
-          "px-6 py-4 text-base": size === "md",
-          "px-8 py-5 text-lg": size === "lg",
-        },
-        // Style variants
-        {
-          "bg-black text-white hover:bg-gray-800 border border-black": style === "filled",
-          "bg-transparent text-black border border-black hover:bg-black hover:text-white": style === "outlined",
-          "bg-transparent text-black hover:bg-gray-100 border-none": style === "minimal",
-        }
+        "w-full transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] rounded-lg", 
+        // ensure center layout similar to previous
+        "flex items-center justify-center gap-3",
+        className
       )}
     >
       {IconComponent && <IconComponent className="w-5 h-5 flex-shrink-0" />}
       <div className="flex-1 text-center">
         <div className="font-medium">{title}</div>
-        {description && <div className="text-sm opacity-75 mt-1">{description}</div>}
+        {description && <div className="text-sm text-muted-foreground mt-1">{description}</div>}
       </div>
-      {!IconComponent && <ExternalLink className="w-4 h-4 flex-shrink-0 opacity-50" />}
-    </button>
+      {!IconComponent && <ExternalLink className="w-4 h-4 flex-shrink-0 opacity-70" />}
+    </Button>
   );
 };
 
@@ -123,6 +120,10 @@ export const linkButtonConfig: ComponentConfig<LinkButtonProps> = {
         { label: "Medium", value: "md" },
         { label: "Large", value: "lg" },
       ],
+    },
+    className: {
+      type: "text",
+      label: "ClassName (advanced)",
     },
     openInNewTab: {
       type: "radio",
