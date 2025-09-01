@@ -84,19 +84,7 @@ export class PagesRepository {
         createdAt: pages.createdAt,
         updatedAt: pages.updatedAt,
         publishedAt: pages.publishedAt,
-        theme: {
-          id: themes.id,
-          name: themes.name,
-          description: themes.description,
-          createdBy: themes.createdBy,
-          config: themes.config,
-          preview: themes.preview,
-          isPublic: themes.isPublic,
-          isSystem: themes.isSystem,
-          status: themes.status,
-          createdAt: themes.createdAt,
-          updatedAt: themes.updatedAt,
-        },
+        theme: themes,
       })
       .from(pages)
       .leftJoin(themes, eq(pages.themeId, themes.id))

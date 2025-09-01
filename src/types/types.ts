@@ -21,35 +21,6 @@ export interface PuckComponent {
     [key: string]: object | Array<object> | string | number | boolean;
   };
 }
-
-// Theme configuration types
-export interface ThemeConfig {
-  colors: {
-    primary: string;
-    secondary: string;
-    background: string;
-    text: string;
-    accent?: string;
-  };
-  fonts: {
-    heading: string;
-    body: string;
-  };
-  spacing: {
-    xs: string;
-    sm: string;
-    md: string;
-    lg: string;
-    xl: string;
-  };
-  borderRadius: {
-    sm: string;
-    md: string;
-    lg: string;
-  };
-  customCSS?: string;
-}
-
 // Block template configuration types
 export interface BlockConfig {
   fields: Record<string, FieldConfig>;

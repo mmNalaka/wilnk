@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { z } from "zod";
-import { protectedProcedure, publicProcedure } from "@/server/lib/orpc";
+import { protectedProcedure } from "@/server/lib/orpc";
 import { db } from "@/server/db";
 import { themes } from "@/server/db/schema/main.schema";
 import { eq, or, and } from "drizzle-orm";
@@ -10,14 +10,12 @@ const createThemeSchema = z.object({
   name: z.string().min(1),
   description: z.string().optional(),
   config: z.any(),
-  previewImage: z.string().optional(),
-  isPublic: z.boolean().optional(),
   category: z.string().optional(),
 });
 
 export const themesRouter = {
   // List available themes
-  list: publicProcedure
+  list: protectedProcedure
     .input(z.object({ userId: z.string().optional() }))
     .output(z.object({
       themes: z.array(z.object({
@@ -35,10 +33,9 @@ export const themesRouter = {
       // Get public themes and user's private themes
       const whereCondition = input.userId 
         ? or(
-            eq(themes.isPublic, true),
-            and(eq(themes.createdBy, input.userId), eq(themes.isPublic, false))
+            and(eq(themes.createdBy, input.userId))
           )
-        : eq(themes.isPublic, true);
+        : eq(themes.isSystem, true);
 
       const availableThemes = await db
         .select({
@@ -46,8 +43,6 @@ export const themesRouter = {
           name: themes.name,
           description: themes.description,
           config: themes.config,
-          preview: themes.preview,
-          isPublic: themes.isPublic,
           createdAt: themes.createdAt,
         })
         .from(themes)
@@ -60,9 +55,6 @@ export const themesRouter = {
         name: theme.name,
         description: theme.description || "",
         config: theme.config,
-        previewImage: theme.preview,
-        isPublic: theme.isPublic,
-        category: "custom", // Default category since DB doesn't have this field
         createdAt: theme.createdAt,
       }));
 
@@ -70,7 +62,7 @@ export const themesRouter = {
     }),
 
   // Get single theme
-  get: publicProcedure
+  get: protectedProcedure
     .input(z.object({ themeId: z.string() }))
     .output(z.object({
       theme: z.object({
@@ -94,8 +86,6 @@ export const themesRouter = {
           name: themes.name,
           description: themes.description,
           config: themes.config,
-          preview: themes.preview,
-          isPublic: themes.isPublic,
           createdAt: themes.createdAt,
           updatedAt: themes.updatedAt,
         })
@@ -114,8 +104,6 @@ export const themesRouter = {
         name: theme.name,
         description: theme.description || "",
         config: theme.config,
-        previewImage: theme.preview,
-        isPublic: theme.isPublic,
         category: "custom", // Default category since DB doesn't have this field
         createdAt: theme.createdAt,
         updatedAt: theme.updatedAt,
@@ -150,8 +138,6 @@ export const themesRouter = {
         name: input.name,
         description: input.description || "",
         config: input.config,
-        preview: input.previewImage || null,
-        isPublic: input.isPublic || false,
         isSystem: false,
         status: "active",
         createdAt: new Date(),
@@ -167,8 +153,6 @@ export const themesRouter = {
         name: createdTheme.name,
         description: createdTheme.description || "",
         config: createdTheme.config,
-        previewImage: createdTheme.preview,
-        isPublic: createdTheme.isPublic,
         category: "custom", // Default category since DB doesn't have this field
         createdAt: createdTheme.createdAt,
         updatedAt: createdTheme.updatedAt,
@@ -218,8 +202,6 @@ export const themesRouter = {
       if (input.data.name) updateData.name = input.data.name;
       if (input.data.description !== undefined) updateData.description = input.data.description;
       if (input.data.config) updateData.config = input.data.config;
-      if (input.data.previewImage !== undefined) updateData.preview = input.data.previewImage;
-      if (input.data.isPublic !== undefined) updateData.isPublic = input.data.isPublic;
 
       const [updatedTheme] = await db
         .update(themes)
@@ -234,8 +216,6 @@ export const themesRouter = {
         name: updatedTheme.name,
         description: updatedTheme.description || "",
         config: updatedTheme.config,
-        previewImage: updatedTheme.preview,
-        isPublic: updatedTheme.isPublic,
         category: "custom", // Default category since DB doesn't have this field
         createdAt: updatedTheme.createdAt,
         updatedAt: updatedTheme.updatedAt,
