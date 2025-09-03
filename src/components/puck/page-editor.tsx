@@ -52,11 +52,20 @@ export const PageEditor = ({
 
   // Load themes from DB via oRPC (select array directly for safe typing)
   const { data: themes = [], isLoading: isThemesLoading } = useQuery<
+    { themes: { id: string; name: string; description: string | null; config: Record<string, string> }[] },
+    Error,
     ThemeConfig[]
   >({
     ...orpc.themes.list.queryOptions({ input: {} }),
-    select: (d: { themes?: ThemeConfig[] } | undefined): ThemeConfig[] =>
-      d?.themes ?? [],
+    select: (d): ThemeConfig[] =>
+      (d?.themes ?? []).map((t) => ({
+        id: t.id,
+        name: t.name,
+        description: t.description ?? "",
+        config: t.config,
+        // default until server includes it; adjust if available on API
+        isSystem: false,
+      })),
   });
   const [selectedThemeId, setSelectedThemeId] = useState<string | undefined>(
     () => themeId

@@ -1,5 +1,6 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Shield, Users } from "lucide-react";
+import Image from "next/image";
 
 export function FeaturesGridSection() {
   return (
@@ -278,19 +279,23 @@ export function FeaturesGridSection() {
                         Likeur
                       </span>
                       <div className="ring-background size-7 ring-4">
-                        <img
-                          className="size-full rounded-full"
+                        <Image
+                          className="rounded-full"
                           src="https://avatars.githubusercontent.com/u/102558960?v=4"
                           alt=""
+                          width={28}
+                          height={28}
                         />
                       </div>
                     </div>
                     <div className="relative ml-[calc(50%-1rem)] flex items-center gap-2">
                       <div className="ring-background size-8 ring-4">
-                        <img
-                          className="size-full rounded-full"
+                        <Image
+                          className="rounded-full"
                           src="https://avatars.githubusercontent.com/u/47919550?v=4"
                           alt=""
+                          width={32}
+                          height={32}
                         />
                       </div>
                       <span className="block h-fit rounded border px-2 py-1 text-xs shadow-sm">
@@ -302,10 +307,12 @@ export function FeaturesGridSection() {
                         B. Ng
                       </span>
                       <div className="ring-background size-7 ring-4">
-                        <img
-                          className="size-full rounded-full"
+                        <Image
+                          className="rounded-full"
                           src="https://avatars.githubusercontent.com/u/31113941?v=4"
                           alt=""
+                          width={28}
+                          height={28}
                         />
                       </div>
                     </div>
