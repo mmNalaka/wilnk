@@ -2,6 +2,7 @@
 import { PageRenderer } from "@/components/puck/page-renderer";
 import { notFound } from "next/navigation";
 import { pagesRepository } from "@/server/modules/pages";
+import type { ThemeConfig } from "@/types/types";
 
 type Params = {
   params: Promise<{ slug: string }>;
@@ -58,8 +59,7 @@ export default async function PublicPage({ params }: Params) {
     <PageRenderer 
       data={page.content} 
       pageId={page.id}
-      theme={page.theme?.config as any}
-      className="bg-gray-50"
+      theme={page.theme?.config as ThemeConfig | undefined}
     />
   );
 }

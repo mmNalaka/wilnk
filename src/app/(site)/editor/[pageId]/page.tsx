@@ -36,12 +36,13 @@ export default function EditorPage() {
   );
 
   // Event handlers
-  const handleSave = async (content: PuckData) => {
+  const handleSave = async (content: PuckData, themeId?: string) => {
     updateMutation.mutate({
       pageId,
       data: {
         title: content.root.props?.title || pageData?.page?.title,
         content,
+        themeId,
       },
     });
   };
@@ -88,6 +89,7 @@ export default function EditorPage() {
   return (
     <PageEditor
       initialData={pageData?.page?.content}
+      themeId={pageData?.page?.themeId || undefined}
       onSave={handleSave}
       onPreview={handlePreview}
       onPublish={handlePublish}

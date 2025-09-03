@@ -56,3 +56,13 @@ export interface ReferrerData {
   domain: string;
   count: number;
 }
+
+// Theme configuration for page preview and slug renderer
+export interface ThemeConfig {
+  // shadcn preset name, e.g. "blue", "green", "amber" etc.
+  id: string;
+  name: string;
+  description: string;
+  config: Record<string, string>;
+  isSystem: boolean;
+}

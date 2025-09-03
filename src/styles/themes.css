@@ -1,0 +1,294 @@
+/* Shadcn theme presets scoped by .theme-<name> and applied to a descendant .theme-container */
+
+/* Default (no-op except charts) */
+.theme-default .theme-container {
+  --chart-1: var(--color-blue-300);
+  --chart-2: var(--color-blue-500);
+  --chart-3: var(--color-blue-600);
+  --chart-4: var(--color-blue-700);
+  --chart-5: var(--color-blue-800);
+}
+
+/* Blue */
+.theme-blue .theme-container {
+  --primary: var(--color-blue-600);
+  --primary-foreground: var(--color-blue-50);
+  --ring: var(--color-blue-400);
+  --sidebar-primary: var(--color-blue-600);
+  --sidebar-primary-foreground: var(--color-blue-50);
+  --sidebar-ring: var(--color-blue-400);
+  --chart-1: var(--color-blue-300);
+  --chart-2: var(--color-blue-500);
+  --chart-3: var(--color-blue-600);
+  --chart-4: var(--color-blue-700);
+  --chart-5: var(--color-blue-800);
+}
+.theme-blue.dark .theme-container {
+  --primary: var(--color-blue-500);
+  --primary-foreground: var(--color-blue-50);
+  --ring: var(--color-blue-900);
+  --sidebar-primary: var(--color-blue-500);
+  --sidebar-primary-foreground: var(--color-blue-50);
+  --sidebar-ring: var(--color-blue-900);
+}
+
+/* Green */
+.theme-green .theme-container {
+  --primary: var(--color-lime-600);
+  --primary-foreground: var(--color-lime-50);
+  --ring: var(--color-lime-400);
+  --chart-1: var(--color-green-300);
+  --chart-2: var(--color-green-500);
+  --chart-3: var(--color-green-600);
+  --chart-4: var(--color-green-700);
+  --chart-5: var(--color-green-800);
+  --sidebar-primary: var(--color-lime-600);
+  --sidebar-primary-foreground: var(--color-lime-50);
+  --sidebar-ring: var(--color-lime-400);
+}
+.theme-green.dark .theme-container {
+  --primary: var(--color-lime-600);
+  --primary-foreground: var(--color-lime-50);
+  --ring: var(--color-lime-900);
+  --sidebar-primary: var(--color-lime-500);
+  --sidebar-primary-foreground: var(--color-lime-50);
+  --sidebar-ring: var(--color-lime-900);
+}
+
+/* Amber */
+.theme-amber .theme-container {
+  --primary: var(--color-amber-600);
+  --primary-foreground: var(--color-amber-50);
+  --ring: var(--color-amber-400);
+  --chart-1: var(--color-amber-300);
+  --chart-2: var(--color-amber-500);
+  --chart-3: var(--color-amber-600);
+  --chart-4: var(--color-amber-700);
+  --chart-5: var(--color-amber-800);
+  --sidebar-primary: var(--color-amber-600);
+  --sidebar-primary-foreground: var(--color-amber-50);
+  --sidebar-ring: var(--color-amber-400);
+}
+.theme-amber.dark .theme-container {
+  --primary: var(--color-amber-500);
+  --primary-foreground: var(--color-amber-50);
+  --ring: var(--color-amber-900);
+  --sidebar-primary: var(--color-amber-500);
+  --sidebar-primary-foreground: var(--color-amber-50);
+  --sidebar-ring: var(--color-amber-900);
+}
+
+/* Rose */
+.theme-rose .theme-container {
+  --primary: var(--color-rose-600);
+  --primary-foreground: var(--color-rose-50);
+  --ring: var(--color-rose-400);
+  --chart-1: var(--color-rose-300);
+  --chart-2: var(--color-rose-500);
+  --chart-3: var(--color-rose-600);
+  --chart-4: var(--color-rose-700);
+  --chart-5: var(--color-rose-800);
+  --sidebar-primary: var(--color-rose-600);
+  --sidebar-primary-foreground: var(--color-rose-50);
+  --sidebar-ring: var(--color-rose-400);
+}
+.theme-rose.dark .theme-container {
+  --primary: var(--color-rose-500);
+  --primary-foreground: var(--color-rose-50);
+  --ring: var(--color-rose-900);
+  --sidebar-primary: var(--color-rose-500);
+  --sidebar-primary-foreground: var(--color-rose-50);
+  --sidebar-ring: var(--color-rose-900);
+}
+
+/* Candy */
+.theme-candy .theme-container {
+  --background: oklch(0.9399 0.0203 345.6985);
+  --foreground: oklch(0.4712 0 0);
+  --card: oklch(0.9498 0.0500 86.8891);
+  --card-foreground: oklch(0.4712 0 0);
+  --popover: oklch(1.0000 0 0);
+  --popover-foreground: oklch(0.4712 0 0);
+  --primary: oklch(0.6209 0.1801 348.1385);
+  --primary-foreground: oklch(1.0000 0 0);
+  --secondary: oklch(0.8095 0.0694 198.1863);
+  --secondary-foreground: oklch(0.3211 0 0);
+  --muted: oklch(0.8800 0.0504 212.0952);
+  --muted-foreground: oklch(0.5795 0 0);
+  --accent: oklch(0.9195 0.0801 87.6670);
+  --accent-foreground: oklch(0.3211 0 0);
+  --destructive: oklch(0.7091 0.1697 21.9551);
+  --destructive-foreground: oklch(1.0000 0 0);
+  --border: oklch(0.6209 0.1801 348.1385);
+  --input: oklch(0.9189 0 0);
+  --ring: oklch(0.7002 0.1597 350.7532);
+  --chart-1: oklch(0.7002 0.1597 350.7532);
+  --chart-2: oklch(0.8189 0.0799 212.0892);
+  --chart-3: oklch(0.9195 0.0801 87.6670);
+  --chart-4: oklch(0.7998 0.1110 348.1791);
+  --chart-5: oklch(0.6197 0.1899 353.9091);
+  --sidebar: oklch(0.9140 0.0424 343.0913);
+  --sidebar-foreground: oklch(0.3211 0 0);
+  --sidebar-primary: oklch(0.6559 0.2118 354.3084);
+  --sidebar-primary-foreground: oklch(1.0000 0 0);
+  --sidebar-accent: oklch(0.8228 0.1095 346.0184);
+  --sidebar-accent-foreground: oklch(0.3211 0 0);
+  --sidebar-border: oklch(0.9464 0.0327 307.1745);
+  --sidebar-ring: oklch(0.6559 0.2118 354.3084);
+  --font-sans: Poppins, sans-serif;
+  --font-serif: Lora, serif;
+  --font-mono: Fira Code, monospace;
+  --radius: 0.4rem;
+  --shadow-2xs: 3px 3px 0px 0px hsl(325.7800 58.1800% 56.8600% / 0.50);
+  --shadow-xs: 3px 3px 0px 0px hsl(325.7800 58.1800% 56.8600% / 0.50);
+  --shadow-sm: 3px 3px 0px 0px hsl(325.7800 58.1800% 56.8600% / 1.00), 3px 1px 2px -1px hsl(325.7800 58.1800% 56.8600% / 1.00);
+  --shadow: 3px 3px 0px 0px hsl(325.7800 58.1800% 56.8600% / 1.00), 3px 1px 2px -1px hsl(325.7800 58.1800% 56.8600% / 1.00);
+  --shadow-md: 3px 3px 0px 0px hsl(325.7800 58.1800% 56.8600% / 1.00), 3px 2px 4px -1px hsl(325.7800 58.1800% 56.8600% / 1.00);
+  --shadow-lg: 3px 3px 0px 0px hsl(325.7800 58.1800% 56.8600% / 1.00), 3px 4px 6px -1px hsl(325.7800 58.1800% 56.8600% / 1.00);
+  --shadow-xl: 3px 3px 0px 0px hsl(325.7800 58.1800% 56.8600% / 1.00), 3px 8px 10px -1px hsl(325.7800 58.1800% 56.8600% / 1.00);
+  --shadow-2xl: 3px 3px 0px 0px hsl(325.7800 58.1800% 56.8600% / 2.50);
+  --tracking-normal: 0em;
+  --spacing: 0.25rem;
+}
+
+.theme-paper .theme-container {
+  --background: oklch(0.9582 0.0152 90.2357);
+  --foreground: oklch(0.3760 0.0225 64.3434);
+  --card: oklch(0.9914 0.0098 87.4695);
+  --card-foreground: oklch(0.3760 0.0225 64.3434);
+  --popover: oklch(0.9914 0.0098 87.4695);
+  --popover-foreground: oklch(0.3760 0.0225 64.3434);
+  --primary: oklch(0.6180 0.0778 65.5444);
+  --primary-foreground: oklch(1.0000 0 0);
+  --secondary: oklch(0.8846 0.0302 85.5655);
+  --secondary-foreground: oklch(0.4313 0.0300 64.9288);
+  --muted: oklch(0.9239 0.0190 83.0636);
+  --muted-foreground: oklch(0.5391 0.0387 71.1655);
+  --accent: oklch(0.8348 0.0426 88.8064);
+  --accent-foreground: oklch(0.3760 0.0225 64.3434);
+  --destructive: oklch(0.5471 0.1438 32.9149);
+  --destructive-foreground: oklch(1.0000 0 0);
+  --border: oklch(0.8606 0.0321 84.5881);
+  --input: oklch(0.8606 0.0321 84.5881);
+  --ring: oklch(0.6180 0.0778 65.5444);
+  --chart-1: oklch(0.6180 0.0778 65.5444);
+  --chart-2: oklch(0.5604 0.0624 68.5805);
+  --chart-3: oklch(0.4851 0.0570 72.6827);
+  --chart-4: oklch(0.6777 0.0624 64.7755);
+  --chart-5: oklch(0.7264 0.0581 66.6967);
+  --sidebar: oklch(0.9239 0.0190 83.0636);
+  --sidebar-foreground: oklch(0.3760 0.0225 64.3434);
+  --sidebar-primary: oklch(0.6180 0.0778 65.5444);
+  --sidebar-primary-foreground: oklch(1.0000 0 0);
+  --sidebar-accent: oklch(0.8348 0.0426 88.8064);
+  --sidebar-accent-foreground: oklch(0.3760 0.0225 64.3434);
+  --sidebar-border: oklch(0.8606 0.0321 84.5881);
+  --sidebar-ring: oklch(0.6180 0.0778 65.5444);
+  --font-sans: Libre Baskerville, serif;
+  --font-serif: Lora, serif;
+  --font-mono: IBM Plex Mono, monospace;
+  --radius: 0.25rem;
+  --shadow-2xs: 2px 3px 5px 0px hsl(28 13% 20% / 0.06);
+  --shadow-xs: 2px 3px 5px 0px hsl(28 13% 20% / 0.06);
+  --shadow-sm: 2px 3px 5px 0px hsl(28 13% 20% / 0.12), 2px 1px 2px -1px hsl(28 13% 20% / 0.12);
+  --shadow: 2px 3px 5px 0px hsl(28 13% 20% / 0.12), 2px 1px 2px -1px hsl(28 13% 20% / 0.12);
+  --shadow-md: 2px 3px 5px 0px hsl(28 13% 20% / 0.12), 2px 2px 4px -1px hsl(28 13% 20% / 0.12);
+  --shadow-lg: 2px 3px 5px 0px hsl(28 13% 20% / 0.12), 2px 4px 6px -1px hsl(28 13% 20% / 0.12);
+  --shadow-xl: 2px 3px 5px 0px hsl(28 13% 20% / 0.12), 2px 8px 10px -1px hsl(28 13% 20% / 0.12);
+  --shadow-2xl: 2px 3px 5px 0px hsl(28 13% 20% / 0.30);
+  --tracking-normal: 0em;
+  --spacing: 0.25rem;
+}
+
+.theme-paper-dark .theme-container {
+  --background: oklch(0.2747 0.0139 57.6523);
+  --foreground: oklch(0.9239 0.0190 83.0636);
+  --card: oklch(0.3237 0.0155 59.0603);
+  --card-foreground: oklch(0.9239 0.0190 83.0636);
+  --popover: oklch(0.3237 0.0155 59.0603);
+  --popover-foreground: oklch(0.9239 0.0190 83.0636);
+  --primary: oklch(0.7264 0.0581 66.6967);
+  --primary-foreground: oklch(0.2747 0.0139 57.6523);
+  --secondary: oklch(0.3795 0.0181 57.1280);
+  --secondary-foreground: oklch(0.9239 0.0190 83.0636);
+  --muted: oklch(0.3237 0.0155 59.0603);
+  --muted-foreground: oklch(0.7982 0.0243 82.1078);
+  --accent: oklch(0.4186 0.0281 56.3404);
+  --accent-foreground: oklch(0.9239 0.0190 83.0636);
+  --destructive: oklch(0.5471 0.1438 32.9149);
+  --destructive-foreground: oklch(1.0000 0 0);
+  --border: oklch(0.3795 0.0181 57.1280);
+  --input: oklch(0.3795 0.0181 57.1280);
+  --ring: oklch(0.7264 0.0581 66.6967);
+  --chart-1: oklch(0.7264 0.0581 66.6967);
+  --chart-2: oklch(0.6777 0.0624 64.7755);
+  --chart-3: oklch(0.6180 0.0778 65.5444);
+  --chart-4: oklch(0.5604 0.0624 68.5805);
+  --chart-5: oklch(0.4851 0.0570 72.6827);
+  --sidebar: oklch(0.2747 0.0139 57.6523);
+  --sidebar-foreground: oklch(0.9239 0.0190 83.0636);
+  --sidebar-primary: oklch(0.7264 0.0581 66.6967);
+  --sidebar-primary-foreground: oklch(0.2747 0.0139 57.6523);
+  --sidebar-accent: oklch(0.4186 0.0281 56.3404);
+  --sidebar-accent-foreground: oklch(0.9239 0.0190 83.0636);
+  --sidebar-border: oklch(0.3795 0.0181 57.1280);
+  --sidebar-ring: oklch(0.7264 0.0581 66.6967);
+  --font-sans: Libre Baskerville, serif;
+  --font-serif: Lora, serif;
+  --font-mono: IBM Plex Mono, monospace;
+  --radius: 0.25rem;
+  --shadow-2xs: 2px 3px 5px 0px hsl(28 13% 20% / 0.06);
+  --shadow-xs: 2px 3px 5px 0px hsl(28 13% 20% / 0.06);
+  --shadow-sm: 2px 3px 5px 0px hsl(28 13% 20% / 0.12), 2px 1px 2px -1px hsl(28 13% 20% / 0.12);
+  --shadow: 2px 3px 5px 0px hsl(28 13% 20% / 0.12), 2px 1px 2px -1px hsl(28 13% 20% / 0.12);
+  --shadow-md: 2px 3px 5px 0px hsl(28 13% 20% / 0.12), 2px 2px 4px -1px hsl(28 13% 20% / 0.12);
+  --shadow-lg: 2px 3px 5px 0px hsl(28 13% 20% / 0.12), 2px 4px 6px -1px hsl(28 13% 20% / 0.12);
+  --shadow-xl: 2px 3px 5px 0px hsl(28 13% 20% / 0.12), 2px 8px 10px -1px hsl(28 13% 20% / 0.12);
+  --shadow-2xl: 2px 3px 5px 0px hsl(28 13% 20% / 0.30);
+}
+
+/* Purple */
+.theme-purple .theme-container {
+  --primary: var(--color-purple-600);
+  --primary-foreground: var(--color-purple-50);
+  --ring: var(--color-purple-400);
+  --chart-1: var(--color-purple-300);
+  --chart-2: var(--color-purple-500);
+  --chart-3: var(--color-purple-600);
+  --chart-4: var(--color-purple-700);
+  --chart-5: var(--color-purple-800);
+  --sidebar-primary: var(--color-purple-600);
+  --sidebar-primary-foreground: var(--color-purple-50);
+  --sidebar-ring: var(--color-purple-400);
+}
+.theme-purple.dark .theme-container {
+  --primary: var(--color-purple-500);
+  --primary-foreground: var(--color-purple-50);
+  --ring: var(--color-purple-900);
+  --sidebar-primary: var(--color-purple-500);
+  --sidebar-primary-foreground: var(--color-purple-50);
+  --sidebar-ring: var(--color-purple-900);
+}
+
+/* Orange */
+.theme-orange .theme-container {
+  --primary: var(--color-orange-600);
+  --primary-foreground: var(--color-orange-50);
+  --ring: var(--color-orange-400);
+  --chart-1: var(--color-orange-300);
+  --chart-2: var(--color-orange-500);
+  --chart-3: var(--color-orange-600);
+  --chart-4: var(--color-orange-700);
+  --chart-5: var(--color-orange-800);
+  --sidebar-primary: var(--color-orange-600);
+  --sidebar-primary-foreground: var(--color-orange-50);
+  --sidebar-ring: var(--color-orange-400);
+}
+.theme-orange.dark .theme-container {
+  --primary: var(--color-orange-500);
+  --primary-foreground: var(--color-orange-50);
+  --ring: var(--color-orange-900);
+  --sidebar-primary: var(--color-orange-500);
+  --sidebar-primary-foreground: var(--color-orange-50);
+  --sidebar-ring: var(--color-orange-900);
+}

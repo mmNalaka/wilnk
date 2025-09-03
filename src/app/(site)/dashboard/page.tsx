@@ -8,7 +8,6 @@ import {
   Eye,
   Copy,
   Trash2,
-  MoreHorizontal,
   Loader2,
 } from "lucide-react";
 import Link from "next/link";
@@ -120,17 +119,6 @@ export default function DashboardPage() {
     }
   };
 
-  const handleDuplicate = async (pageId: string) => {
-    try {
-      await mockDashboardService.duplicatePage(pageId);
-      // Refresh pages list
-      const data = await mockDashboardService.getPages();
-      setPages(data);
-    } catch (error) {
-      console.error("Failed to duplicate page:", error);
-    }
-  };
-
   const handleCreatePage = () => {
     createPageMutation.mutate();
   };
@@ -158,153 +146,149 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      {/* Header */}
-      <div className="flex items-center justify-between mb-8">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">My Pages</h1>
-          <p className="text-gray-600 mt-2">Manage your Link-in-Bio pages</p>
+    <div className="min-h-screen w-full bg-background text-foreground">
+      <div className="container mx-auto px-4 py-8">
+        {/* Header */}
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-8">
+          <div className="flex-1">
+            <h1 className="text-2xl sm:text-3xl font-bold">My Pages</h1>
+            <p className="text-sm sm:text-base text-muted-foreground mt-1">Manage your Link-in-Bio pages</p>
+          </div>
+          <Button
+            className="flex items-center gap-2 w-full sm:w-auto"
+            onClick={handleCreatePage}
+            disabled={createPageMutation.isPending}
+          >
+            {createPageMutation.isPending ? (
+              <Loader2 className="w-4 h-4 animate-spin" />
+            ) : (
+              <Plus className="w-4 h-4" />
+            )}
+            {createPageMutation.isPending ? "Creating..." : "Create New Page"}
+          </Button>
         </div>
 
-        <Button
-          className="flex items-center gap-2"
-          onClick={handleCreatePage}
-          disabled={createPageMutation.isPending}
-        >
-          {createPageMutation.isPending ? (
-            <Loader2 className="w-4 h-4 animate-spin" />
-          ) : (
-            <Plus className="w-4 h-4" />
-          )}
-          {createPageMutation.isPending ? "Creating..." : "Create New Page"}
-        </Button>
-      </div>
-
-      {/* Stats Overview */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <div className="bg-white p-6 rounded-lg border">
-          <h3 className="text-sm font-medium text-gray-500">Total Pages</h3>
-          <p className="text-2xl font-bold text-gray-900 mt-2">
-            {pagesQuery?.data?.pages?.length}
-          </p>
-        </div>
-        <div className="bg-white p-6 rounded-lg border">
-          <h3 className="text-sm font-medium text-gray-500">Total Views</h3>
-          <p className="text-2xl font-bold text-gray-900 mt-2">
-            {pagesQuery?.data?.pages
-              .reduce((sum, page) => sum + page.viewCount, 0)
-              .toLocaleString()}
-          </p>
-        </div>
-        <div className="bg-white p-6 rounded-lg border">
-          <h3 className="text-sm font-medium text-gray-500">Total Clicks</h3>
-          <p className="text-2xl font-bold text-gray-900 mt-2">
-            {pagesQuery?.data?.pages
-              .reduce((sum, page) => sum + page.clickCount, 0)
-              .toLocaleString()}
-          </p>
-        </div>
-      </div>
-
-      {/* Pages List */}
-      <div className="bg-white rounded-lg border">
-        <div className="px-6 py-4 border-b">
-          <h2 className="text-lg font-semibold text-gray-900">Your Pages</h2>
-        </div>
-
-        {pagesQuery?.data?.pages.length === 0 ? (
-          <div className="text-center py-12">
-            <div className="text-gray-400 mb-4">
-              <Plus className="w-12 h-12 mx-auto" />
+        {/* Hero / Summary */}
+        <div className="rounded-xl border bg-card text-card-foreground p-5 sm:p-6 mb-8">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div className="rounded-lg bg-muted/40 p-4">
+              <h3 className="text-xs uppercase tracking-wider text-muted-foreground">Total Pages</h3>
+              <p className="text-2xl font-semibold mt-1">{pagesQuery?.data?.pages?.length}</p>
             </div>
-            <h3 className="text-lg font-medium text-gray-900 mb-2">
-              No pages yet
-            </h3>
-            <p className="text-gray-600 mb-6">
-              Create your first Link-in-Bio page to get started
-            </p>
-            <Link href="/editor/new">
-              <Button>Create Your First Page</Button>
-            </Link>
+            <div className="rounded-lg bg-muted/40 p-4">
+              <h3 className="text-xs uppercase tracking-wider text-muted-foreground">Total Views</h3>
+              <p className="text-2xl font-semibold mt-1">
+                {pagesQuery?.data?.pages
+                  .reduce((sum, page) => sum + page.viewCount, 0)
+                  .toLocaleString()}
+              </p>
+            </div>
+            <div className="rounded-lg bg-muted/40 p-4">
+              <h3 className="text-xs uppercase tracking-wider text-muted-foreground">Total Clicks</h3>
+              <p className="text-2xl font-semibold mt-1">
+                {pagesQuery?.data?.pages
+                  .reduce((sum, page) => sum + page.clickCount, 0)
+                  .toLocaleString()}
+              </p>
+            </div>
           </div>
-        ) : (
-          <div className="divide-y">
-            {pagesQuery?.data?.pages.map((page) => (
-              <div
-                key={page.id}
-                className="px-6 py-4 flex items-center justify-between"
-              >
-                <div className="flex-1">
-                  <div className="flex items-center gap-3 mb-2">
-                    <h3 className="font-medium text-gray-900">{page.title}</h3>
-                    <span
-                      className={`px-2 py-1 text-xs rounded-full ${
-                        page.isPublished
-                          ? "bg-green-100 text-green-800"
-                          : page.isPublic
-                          ? "bg-yellow-100 text-yellow-800"
-                          : "bg-gray-100 text-gray-800"
-                      }`}
-                    >
-                      {page.isPublished
-                        ? "Published"
-                        : page.isPublic
-                        ? "Public"
-                        : "Private"}
-                    </span>
-                  </div>
+        </div>
 
-                  <div className="flex items-center gap-6 text-sm text-gray-600">
-                    <span>/{page.slug}</span>
-                    <span>{page.viewCount.toLocaleString()} views</span>
-                    <span>{page.clickCount.toLocaleString()} clicks</span>
-                    <span>Updated {page.updatedAt.toDateString()}</span>
-                  </div>
-                </div>
+        {/* Pages List */}
+        <div className="rounded-xl border bg-card text-card-foreground overflow-hidden">
+          <div className="px-4 sm:px-6 py-4 border-b">
+            <h2 className="text-base sm:text-lg font-semibold">Your Pages</h2>
+          </div>
 
-                <div className="flex items-center gap-2">
-                  <Link href={`/editor/${page.id}`}>
-                    <Button variant="outline" size="sm">
-                      <Edit className="w-4 h-4" />
-                    </Button>
-                  </Link>
-
-                  <Link href={`/preview/${page.id}`} target="_blank">
-                    <Button variant="outline" size="sm">
-                      <Eye className="w-4 h-4" />
-                    </Button>
-                  </Link>
-
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => copyPageUrl(page.slug)}
-                  >
-                    <Copy className="w-4 h-4" />
-                  </Button>
-
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => handleDuplicate(page.id)}
-                  >
-                    <MoreHorizontal className="w-4 h-4" />
-                  </Button>
-
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => handleDelete(page.id)}
-                    disabled={deletingPageId === page.id}
-                    className="text-red-600 hover:text-red-700"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </Button>
-                </div>
+          {pagesQuery?.data?.pages.length === 0 ? (
+            <div className="text-center py-12">
+              <div className="text-muted-foreground mb-4">
+                <Plus className="w-10 h-10 mx-auto" />
               </div>
-            ))}
-          </div>
-        )}
+              <h3 className="text-lg font-medium mb-2">No pages yet</h3>
+              <p className="text-muted-foreground mb-6">
+                Create your first Link-in-Bio page to get started
+              </p>
+              <Link href="/editor/new">
+                <Button>Create Your First Page</Button>
+              </Link>
+            </div>
+          ) : (
+            <ul className="divide-y">
+              {pagesQuery?.data?.pages.map((page) => (
+                <li
+                  key={page.id}
+                  className="px-4 sm:px-6 py-4 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
+                >
+                  <div className="flex-1 min-w-0">
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:gap-3 mb-2">
+                      <h3 className="font-medium truncate text-base">{page.title}</h3>
+                      <span
+                        className={`mt-1 sm:mt-0 inline-flex w-fit items-center gap-1 px-2 py-0.5 text-xs rounded-full border ${
+                          page.isPublished
+                            ? "bg-green-100 text-green-800 border-green-200"
+                            : page.isPublic
+                            ? "bg-yellow-100 text-yellow-800 border-yellow-200"
+                            : "bg-gray-100 text-gray-800 border-gray-200"
+                        }`}
+                      >
+                        {page.isPublished
+                          ? "Published"
+                          : page.isPublic
+                          ? "Public"
+                          : "Private"}
+                      </span>
+                    </div>
+
+                    <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-muted-foreground">
+                      <span className="truncate">/{page.slug}</span>
+                      <span>{page.viewCount.toLocaleString()} views</span>
+                      <span>{page.clickCount.toLocaleString()} clicks</span>
+                      <span>Updated {page.updatedAt.toDateString()}</span>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2 self-start sm:self-auto">
+                    <Link href={`/editor/${page.id}`}>
+                      <Button variant="outline" size="sm" className="gap-1">
+                        <Edit className="w-4 h-4" />
+                        <span className="sr-only sm:not-sr-only">Edit</span>
+                      </Button>
+                    </Link>
+
+                    <Link href={`/preview/${page.id}`} target="_blank">
+                      <Button variant="outline" size="sm" className="gap-1">
+                        <Eye className="w-4 h-4" />
+                        <span className="sr-only sm:not-sr-only">Preview</span>
+                      </Button>
+                    </Link>
+
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => copyPageUrl(page.slug)}
+                      className="gap-1"
+                    >
+                      <Copy className="w-4 h-4" />
+                      <span className="sr-only sm:not-sr-only">Copy URL</span>
+                    </Button>
+
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleDelete(page.id)}
+                      disabled={deletingPageId === page.id}
+                      className="text-red-600 hover:text-red-700 gap-1"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                      <span className="sr-only sm:not-sr-only">Delete</span>
+                    </Button>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
       </div>
     </div>
   );
