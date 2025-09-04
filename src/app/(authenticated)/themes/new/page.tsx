@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { ThemeEditorInline } from "@/components/themes/theme-editor-inline";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { ArrowLeft } from "lucide-react";
 
 export default function NewThemePage() {
   const router = useRouter();
@@ -17,7 +18,7 @@ export default function NewThemePage() {
           <p className="text-sm text-muted-foreground">Design a new theme using the color picker and live preview.</p>
         </div>
         <Link href="/themes">
-          <Button variant="ghost">Back to Themes</Button>
+        <Button variant="ghost"><ArrowLeft className="mr-2 h-4 w-4" />Back to Themes</Button>
         </Link>
       </div>
 

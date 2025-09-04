@@ -26,7 +26,7 @@ export default function EditThemePage() {
           <p className="text-sm text-muted-foreground">Adjust variables with the color picker and see a live preview.</p>
         </div>
         <Link href="/themes">
-          <Button variant="link"><ArrowLeft className="mr-2 h-4 w-4" />Back to Themes</Button>
+          <Button variant="ghost"><ArrowLeft className="mr-2 h-4 w-4" />Back to Themes</Button>
         </Link>
       </div>
 

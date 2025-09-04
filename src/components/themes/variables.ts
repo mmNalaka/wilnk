@@ -12,8 +12,6 @@ export type ThemeVarGroupKey =
   | "colors.accent"
   | "colors.destructive"
   | "borders.inputs"
-  | "charts"
-  | "sidebar"
   | "typography"
   | "radius"
   | "shadows";
@@ -115,43 +113,6 @@ export const THEME_GROUPS: ThemeVarGroup[] = [
       { key: "--border", label: "Border", type: "color" },
       { key: "--input", label: "Input", type: "color" },
       { key: "--ring", label: "Ring", type: "color" },
-    ],
-  },
-  {
-    key: "charts",
-    title: "Chart Colors",
-    fields: [
-      { key: "--chart-1", label: "Chart 1", type: "color" },
-      { key: "--chart-2", label: "Chart 2", type: "color" },
-      { key: "--chart-3", label: "Chart 3", type: "color" },
-      { key: "--chart-4", label: "Chart 4", type: "color" },
-      { key: "--chart-5", label: "Chart 5", type: "color" },
-    ],
-  },
-  {
-    key: "sidebar",
-    title: "Sidebar Colors",
-    fields: [
-      { key: "--sidebar", label: "Sidebar", type: "color" },
-      {
-        key: "--sidebar-foreground",
-        label: "Sidebar Foreground",
-        type: "color",
-      },
-      { key: "--sidebar-primary", label: "Sidebar Primary", type: "color" },
-      {
-        key: "--sidebar-primary-foreground",
-        label: "Sidebar Primary Foreground",
-        type: "color",
-      },
-      { key: "--sidebar-accent", label: "Sidebar Accent", type: "color" },
-      {
-        key: "--sidebar-accent-foreground",
-        label: "Sidebar Accent Foreground",
-        type: "color",
-      },
-      { key: "--sidebar-border", label: "Sidebar Border", type: "color" },
-      { key: "--sidebar-ring", label: "Sidebar Ring", type: "color" },
     ],
   },
   {
