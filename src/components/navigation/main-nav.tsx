@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { Home, BarChart3, Settings, Plus } from "lucide-react";
+import { Home, BarChart3, Settings, Plus, Palette } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const navItems = [
@@ -16,6 +16,11 @@ const navItems = [
     title: "Analytics",
     href: "/analytics",
     icon: BarChart3,
+  },
+  {
+    title: "Themes",
+    href: "/themes",
+    icon: Palette,
   },
   {
     title: "Settings",
@@ -32,7 +37,7 @@ export function MainNav() {
       <Link href="/dashboard" className="flex items-center space-x-2">
         <div className="font-bold text-xl">Wilnk</div>
       </Link>
-      
+
       <div className="hidden md:flex items-center space-x-4 ml-8">
         {navItems.map((item) => (
           <Link
@@ -40,9 +45,7 @@ export function MainNav() {
             href={item.href}
             className={cn(
               "text-sm font-medium transition-colors hover:text-primary",
-              pathname === item.href
-                ? "text-black"
-                : "text-muted-foreground"
+              pathname === item.href ? "text-black" : "text-muted-foreground"
             )}
           >
             <div className="flex items-center space-x-2">

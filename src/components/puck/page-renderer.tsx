@@ -15,7 +15,12 @@ interface PageRendererProps {
   theme?: ThemeConfig | Record<string, string>;
 }
 
-export const PageRenderer = ({ data, pageId, className, theme }: PageRendererProps) => {
+export const PageRenderer = ({
+  data,
+  pageId,
+  className,
+  theme,
+}: PageRendererProps) => {
   type CSSVarKey =
     | "--primary"
     | "--secondary"
@@ -45,24 +50,34 @@ export const PageRenderer = ({ data, pageId, className, theme }: PageRendererPro
     "--border": "oklch(0.9220 0 0)",
     "--input": "oklch(0.9220 0 0)",
     "--ring": "oklch(0.7080 0 0)",
-    "--font-sans": "ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'",
-    "--font-serif": "ui-serif, Georgia, Cambria, \"Times New Roman\", Times, serif",
-    "--font-mono": "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, \"Liberation Mono\", \"Courier New\", monospace",
+    "--font-sans":
+      "ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'",
+    "--font-serif":
+      'ui-serif, Georgia, Cambria, "Times New Roman", Times, serif',
+    "--font-mono":
+      'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
     "--radius": "0.625rem",
     "--shadow-2xs": "0 1px 3px 0px hsl(0 0% 0% / 0.05)",
     "--shadow-xs": "0 1px 3px 0px hsl(0 0% 0% / 0.05)",
-    "--shadow-sm": "0 1px 3px 0px hsl(0 0% 0% / 0.10), 0 1px 2px -1px hsl(0 0% 0% / 0.10)",
-    "--shadow": "0 1px 3px 0px hsl(0 0% 0% / 0.10), 0 1px 2px -1px hsl(0 0% 0% / 0.10)",
-    "--shadow-md": "0 1px 3px 0px hsl(0 0% 0% / 0.10), 0 2px 4px -1px hsl(0 0% 0% / 0.10)",
-    "--shadow-lg": "0 1px 3px 0px hsl(0 0% 0% / 0.10), 0 4px 6px -1px hsl(0 0% 0% / 0.10)",
-    "--shadow-xl": "0 1px 3px 0px hsl(0 0% 0% / 0.10), 0 8px 10px -1px hsl(0 0% 0% / 0.10)",
+    "--shadow-sm":
+      "0 1px 3px 0px hsl(0 0% 0% / 0.10), 0 1px 2px -1px hsl(0 0% 0% / 0.10)",
+    "--shadow":
+      "0 1px 3px 0px hsl(0 0% 0% / 0.10), 0 1px 2px -1px hsl(0 0% 0% / 0.10)",
+    "--shadow-md":
+      "0 1px 3px 0px hsl(0 0% 0% / 0.10), 0 2px 4px -1px hsl(0 0% 0% / 0.10)",
+    "--shadow-lg":
+      "0 1px 3px 0px hsl(0 0% 0% / 0.10), 0 4px 6px -1px hsl(0 0% 0% / 0.10)",
+    "--shadow-xl":
+      "0 1px 3px 0px hsl(0 0% 0% / 0.10), 0 8px 10px -1px hsl(0 0% 0% / 0.10)",
     "--shadow-2xl": "0 1px 3px 0px hsl(0 0% 0% / 0.25)",
     "--tracking-normal": "0em",
     "--spacing": "0.25rem",
   };
 
   // Build CSS variables from either structured ThemeConfig or flat key-value pairs
-  const cssVars: Partial<Record<CSSVarKey | string, string>> = { ...defaultVars };
+  const cssVars: Partial<Record<CSSVarKey | string, string>> = {
+    ...defaultVars,
+  };
   if (theme && typeof theme === "object" && !Array.isArray(theme)) {
     // If it's a flat key-value map (from backend), copy as-is
     const entries = Object.entries(theme as Record<string, string>);
@@ -74,9 +89,11 @@ export const PageRenderer = ({ data, pageId, className, theme }: PageRendererPro
       const cfg = theme as ThemeConfig;
       if (cfg?.config?.primary) cssVars["--primary"] = cfg.config.primary;
       if (cfg?.config?.secondary) cssVars["--secondary"] = cfg.config.secondary;
-      if (cfg?.config?.background) cssVars["--background"] = cfg.config.background;
+      if (cfg?.config?.background)
+        cssVars["--background"] = cfg.config.background;
       if (cfg?.config?.text) cssVars["--foreground"] = cfg.config.text;
-      if (cfg?.config?.fontSerif) cssVars["--font-serif"] = cfg.config.fontSerif;
+      if (cfg?.config?.fontSerif)
+        cssVars["--font-serif"] = cfg.config.fontSerif;
       if (cfg?.config?.fontSans) cssVars["--font-sans"] = cfg.config.fontSans;
     }
   }
@@ -84,9 +101,12 @@ export const PageRenderer = ({ data, pageId, className, theme }: PageRendererPro
 
   // Render without static theme classes; rely on runtime CSS variables only
   return (
-    <div className={cn("min-h-screen w-full") } style={customStyles}>
+    <div className={cn("min-h-screen w-full")} style={customStyles}>
       <div
-        className={cn("theme-container bg-background text-foreground h-screen", className)}
+        className={cn(
+          "theme-container bg-background text-foreground min-h-screen",
+          className
+        )}
       >
         {pageId && <AnalyticsTracker pageId={pageId} />}
         <div className="max-w-md mx-auto px-4 py-4">
@@ -95,6 +115,4 @@ export const PageRenderer = ({ data, pageId, className, theme }: PageRendererPro
       </div>
     </div>
   );
-}
-;
-
+};
