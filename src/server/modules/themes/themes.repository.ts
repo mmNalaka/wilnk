@@ -19,6 +19,7 @@ export class ThemesRepository {
         name: themes.name,
         description: themes.description,
         config: themes.config,
+        isSystem: themes.isSystem,
         createdAt: themes.createdAt,
         // Note: exclude updatedAt/createdBy from list response to match schema
       })
@@ -35,6 +36,7 @@ export class ThemesRepository {
         name: t.name,
         description: t.description ?? null,
         config,
+        isSystem: Boolean((t as unknown as { isSystem: unknown }).isSystem),
         createdAt: new Date(t.createdAt as unknown as string | number | Date),
       };
     });
@@ -59,6 +61,7 @@ export class ThemesRepository {
       name: t.name,
       description: t.description ?? null,
       config,
+      isSystem: Boolean(t.isSystem),
       createdAt: new Date(t.createdAt as unknown as string | number | Date),
       updatedAt: new Date(t.updatedAt as unknown as string | number | Date),
     };

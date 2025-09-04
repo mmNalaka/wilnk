@@ -22,6 +22,7 @@ export const themeSchema = z.object({
   name: z.string(),
   description: z.string().nullable(),
   config: themeConfigSchema,
+  isSystem: z.boolean().optional(),
   createdAt: z.date(),
   updatedAt: z.date(),
 });
@@ -33,6 +34,7 @@ export const themesListResponseSchema = z.object({
       name: z.string(),
       description: z.string().nullable(),
       config: themeConfigSchema,
+      isSystem: z.boolean().optional(),
       createdAt: z.date(),
     })
   ),
