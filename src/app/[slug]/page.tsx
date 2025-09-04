@@ -60,6 +60,7 @@ export default async function PublicPage({ params }: Params) {
       data={page.content} 
       pageId={page.id}
       theme={page.theme?.config as ThemeConfig | undefined}
+      className="min-h-screen"
     />
   );
 }

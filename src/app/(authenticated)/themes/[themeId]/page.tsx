@@ -5,8 +5,9 @@ import { useParams, useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { orpc } from "@/utils/query-client";
 import { ThemeEditorInline } from "@/components/themes/theme-editor-inline";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { ArrowLeft } from "lucide-react";
 
 export default function EditThemePage() {
   const params = useParams<{ themeId: string }>();
@@ -25,14 +26,13 @@ export default function EditThemePage() {
           <p className="text-sm text-muted-foreground">Adjust variables with the color picker and see a live preview.</p>
         </div>
         <Link href="/themes">
-          <Button variant="ghost">Back to Themes</Button>
+          <Button variant="link"><ArrowLeft className="mr-2 h-4 w-4" />Back to Themes</Button>
         </Link>
       </div>
 
       <Card>
         <CardHeader>
           <CardTitle>Theme Editor</CardTitle>
-          <CardDescription>Editor on the left. Live preview on the right.</CardDescription>
         </CardHeader>
         <CardContent>
           {isLoading ? (

@@ -53,6 +53,7 @@ export default function PreviewPage() {
       data={pageData.page.content}
       // Pass flat key-value CSS vars for runtime theming
       theme={runtimeThemeVars}
+      className="min-h-screen"
     />
   );
 }

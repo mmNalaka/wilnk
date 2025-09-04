@@ -101,10 +101,10 @@ export const PageRenderer = ({
 
   // Render without static theme classes; rely on runtime CSS variables only
   return (
-    <div className={cn("min-h-screen w-full")} style={customStyles}>
+    <div className={cn("h-full")} style={customStyles}>
       <div
         className={cn(
-          "theme-container bg-background text-foreground min-h-screen",
+          "theme-container bg-background text-foreground",
           className
         )}
       >
