@@ -2,12 +2,13 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Plus, Loader2 } from "lucide-react";
+import { Plus, Loader2, Eye, MousePointer, Layers } from "lucide-react";
 import Link from "next/link";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { client } from "@/utils/query-client";
 import { toast } from "sonner";
 import { PagesTable } from "./pages-table";
+import { SectionCards } from "@/components/section-cards";
 
 // NOTE: Dashboard uses oRPC client for data operations
 
@@ -98,31 +99,39 @@ export default function DashboardPage() {
           </Button>
         </div>
 
-        {/* Hero / Summary */}
-        <div className="rounded-xl border bg-card text-card-foreground p-5 sm:p-6 mb-8">
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div className="rounded-lg bg-muted/40 p-4">
-              <h3 className="text-xs uppercase tracking-wider text-muted-foreground">Total Pages</h3>
-              <p className="text-2xl font-semibold mt-1">{pagesQuery?.data?.pages?.length}</p>
-            </div>
-            <div className="rounded-lg bg-muted/40 p-4">
-              <h3 className="text-xs uppercase tracking-wider text-muted-foreground">Total Views</h3>
-              <p className="text-2xl font-semibold mt-1">
-                {pagesQuery?.data?.pages
-                  .reduce((sum, page) => sum + page.viewCount, 0)
-                  .toLocaleString()}
-              </p>
-            </div>
-            <div className="rounded-lg bg-muted/40 p-4">
-              <h3 className="text-xs uppercase tracking-wider text-muted-foreground">Total Clicks</h3>
-              <p className="text-2xl font-semibold mt-1">
-                {pagesQuery?.data?.pages
-                  .reduce((sum, page) => sum + page.clickCount, 0)
-                  .toLocaleString()}
-              </p>
-            </div>
-          </div>
-        </div>
+        {/* Summary Cards */}
+        <SectionCards
+          className="mb-8 gap-3"
+          compact
+          items={[
+            {
+              title: "Total Pages",
+              value: pagesQuery?.data?.pages?.length ?? 0,
+              icon: <Layers className="h-4 w-4" />,
+              subtitle: "Your published and draft pages",
+              helpText: "Manage and organize your Link-in-Bio pages",
+            },
+            {
+              title: "Total Views",
+              value: (pagesQuery?.data?.pages ?? [])
+                .reduce((sum, page) => sum + page.viewCount, 0)
+                .toLocaleString(),
+              icon: <Eye className="h-4 w-4" />,
+              subtitle: "Traffic for all pages",
+              helpText: "Sum of page views across your pages",
+            },
+            {
+              title: "Total Clicks",
+              value: (pagesQuery?.data?.pages ?? [])
+                .reduce((sum, page) => sum + page.clickCount, 0)
+                .toLocaleString(),
+              icon: <MousePointer className="h-4 w-4" />,
+              subtitle: "Engagement on links",
+              helpText: "Total clicks on your page links",
+            },
+          ]}
+          columns={{ base: 1, sm: 2, lg: 3, xl: 3 }}
+        />
 
         {/* Pages List */}
         <div className="rounded-xl border bg-card text-card-foreground overflow-hidden">

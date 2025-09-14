@@ -7,6 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge";
 import { Eye, MousePointer, TrendingUp, Users, Calendar, ExternalLink } from "lucide-react";
 import { api } from "@/lib/api-client";
+import { SectionCards } from "@/components/section-cards";
 
 interface AnalyticsData {
   totalViews: number;
@@ -114,47 +115,39 @@ export default function AnalyticsPage() {
       </div>
 
       {/* Overview Cards */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Views</CardTitle>
-            <Eye className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{analytics.totalViews.toLocaleString()}</div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Clicks</CardTitle>
-            <MousePointer className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{analytics.totalClicks.toLocaleString()}</div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Unique Visitors</CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{analytics.uniqueVisitors.toLocaleString()}</div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Click-through Rate</CardTitle>
-            <TrendingUp className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{analytics.clickThroughRate}%</div>
-          </CardContent>
-        </Card>
-      </div>
+      <SectionCards
+        items={[
+          {
+            title: "Total Views",
+            value: analytics.totalViews.toLocaleString(),
+            icon: <Eye className="h-4 w-4 text-muted-foreground" />,
+            subtitle: "Total views on your pages",
+            helpText: "Sum of page views across your pages",
+          },
+          {
+            title: "Total Clicks",
+            value: analytics.totalClicks.toLocaleString(),
+            icon: <MousePointer className="h-4 w-4 text-muted-foreground" />,
+            subtitle: "Total clicks on your pages",
+            helpText: "Sum of page clicks across your pages",
+          },
+          {
+            title: "Unique Visitors",
+            value: analytics.uniqueVisitors.toLocaleString(),
+            icon: <Users className="h-4 w-4 text-muted-foreground" />,
+            subtitle: "Unique visitors to your pages",
+            helpText: "Number of unique visitors to your pages",
+          },
+          {
+            title: "Click-through Rate",
+            value: `${analytics.clickThroughRate}%`,
+            icon: <TrendingUp className="h-4 w-4 text-muted-foreground" />,
+            subtitle: "Click-through rate on your pages",
+            helpText: "Percentage of clicks on your pages",
+          },
+        ]}
+        columns={{ base: 1, sm: 2, lg: 4 }}
+      />
 
       <div className="grid gap-6 md:grid-cols-2">
         {/* Top Pages */}
