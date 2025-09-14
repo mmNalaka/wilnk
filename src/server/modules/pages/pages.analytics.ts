@@ -1,6 +1,6 @@
 import { db } from "@/server/db";
 import { pageViews, clickEvents } from "@/server/db/schema/main.schema";
-import { eq, count, and, gte } from "drizzle-orm";
+import { eq, count, and, gte, inArray } from "drizzle-orm";
 
 export class PagesAnalytics {
   /**
@@ -58,7 +58,7 @@ export class PagesAnalytics {
         count: count(),
       })
       .from(pageViews)
-      .where(eq(pageViews.pageId, pageIds[0])) // This would need to be modified for multiple IDs
+      .where(inArray(pageViews.pageId, pageIds))
       .groupBy(pageViews.pageId);
 
     // Get click counts
@@ -68,7 +68,7 @@ export class PagesAnalytics {
         count: count(),
       })
       .from(clickEvents)
-      .where(eq(clickEvents.pageId, pageIds[0])) // This would need to be modified for multiple IDs
+      .where(inArray(clickEvents.pageId, pageIds))
       .groupBy(clickEvents.pageId);
 
     // Combine results
