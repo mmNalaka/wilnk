@@ -2,6 +2,15 @@
 
 import { useEffect } from "react";
 import { nanoid } from "nanoid";
+import { api } from "@/lib/api-client";
+
+declare global {
+  interface Window {
+    __ANALYTICS_ENABLED__?: boolean;
+  }
+}
+
+const DISABLE_GEO = process.env.NEXT_PUBLIC_ANALYTICS_DISABLE_GEO === 'true';
 
 interface AnalyticsTrackerProps {
   pageId: string;
@@ -12,6 +21,7 @@ interface AnalyticsTrackerProps {
 class AnalyticsService {
   private visitorId: string;
   private sessionId: string;
+  private lastPageId?: string;
 
   constructor() {
     // Get or create visitor ID (persisted in localStorage)
@@ -33,6 +43,9 @@ class AnalyticsService {
 
   private async getLocationData(): Promise<{ country: string; city: string }> {
     try {
+      if (DISABLE_GEO) {
+        return { country: 'Unknown', city: 'Unknown' };
+      }
       // Use a free IP geolocation service
       const response = await fetch('https://ipapi.co/json/');
       const data = (await response.json()) as {
@@ -78,6 +91,8 @@ class AnalyticsService {
 
   async trackPageView(pageId: string) {
     try {
+      // Store pageId for later click tracking
+      this.lastPageId = pageId;
       const locationData = await this.getLocationData();
       const deviceInfo = this.getDeviceInfo();
       
@@ -89,32 +104,25 @@ class AnalyticsService {
         ...deviceInfo,
         referrer: typeof window !== 'undefined' ? document.referrer : '',
         // Extract UTM parameters
-        utmSource: new URLSearchParams(window.location.search).get('utm_source'),
-        utmMedium: new URLSearchParams(window.location.search).get('utm_medium'),
-        utmCampaign: new URLSearchParams(window.location.search).get('utm_campaign'),
-        viewedAt: new Date().toISOString(),
+        utmSource: new URLSearchParams(window.location.search).get('utm_source') ?? undefined,
+        utmMedium: new URLSearchParams(window.location.search).get('utm_medium') ?? undefined,
+        utmCampaign: new URLSearchParams(window.location.search).get('utm_campaign') ?? undefined,
       };
 
-      // Send to analytics API
-      await fetch('/api/analytics/page-view', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(viewData),
-      });
+      // Send via oRPC client
+      await api.analytics.trackPageView(viewData);
     } catch (error) {
       console.warn('Failed to track page view:', error);
     }
   }
 
-  async trackClick(pageId: string, blockId: string, blockType: string, url?: string, label?: string) {
+  async trackClick(pageId: string | undefined, blockId: string, blockType: string, url: string, label?: string) {
     try {
       const locationData = await this.getLocationData();
       const deviceInfo = this.getDeviceInfo();
       
       const clickData = {
-        pageId,
+        pageId: pageId ?? this.lastPageId ?? "",
         blockId,
         blockType,
         url,
@@ -124,17 +132,10 @@ class AnalyticsService {
         ...locationData,
         ...deviceInfo,
         referrer: typeof window !== 'undefined' ? document.referrer : '',
-        clickedAt: new Date().toISOString(),
       };
 
-      // Send to analytics API
-      await fetch('/api/analytics/click', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(clickData),
-      });
+      // Send via oRPC client
+      await api.analytics.trackClick(clickData);
     } catch (error) {
       console.warn('Failed to track click:', error);
     }
@@ -155,29 +156,18 @@ export const AnalyticsTracker = ({ pageId, enabled = true }: AnalyticsTrackerPro
   useEffect(() => {
     if (!enabled || typeof window === 'undefined') return;
 
+    // Gate: mark analytics as enabled only on pages where tracker is mounted
+    window.__ANALYTICS_ENABLED__ = true;
+
     const analytics = getAnalytics();
     
     // Track page view
     analytics.trackPageView(pageId);
-
-    // Track time on page
-    const startTime = Date.now();
     
-    const handleBeforeUnload = () => {
-      const duration = Math.round((Date.now() - startTime) / 1000);
-      // Send duration data (this might not always work due to browser limitations)
-      navigator.sendBeacon('/api/analytics/duration', JSON.stringify({
-        pageId,
-        visitorId: analytics['visitorId'],
-        sessionId: analytics['sessionId'],
-        duration,
-      }));
-    };
-
-    window.addEventListener('beforeunload', handleBeforeUnload);
-
+    // We intentionally keep it minimal: no duration beacon
     return () => {
-      window.removeEventListener('beforeunload', handleBeforeUnload);
+      // Clear the gate on unmount
+      window.__ANALYTICS_ENABLED__ = false;
     };
   }, [pageId, enabled]);
 

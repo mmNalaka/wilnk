@@ -3,6 +3,7 @@ import { PageRenderer } from "@/components/puck/page-renderer";
 import { notFound } from "next/navigation";
 import { pagesRepository } from "@/server/modules/pages";
 import type { ThemeConfig } from "@/types/types";
+import { AnalyticsTracker } from "@/components/puck/analytics-tracker";
 
 type Params = {
   params: Promise<{ slug: string }>;
@@ -56,11 +57,13 @@ export default async function PublicPage({ params }: Params) {
   }
 
   return (
-    <PageRenderer 
-      data={page.content} 
-      pageId={page.id}
-      theme={page.theme?.config as ThemeConfig | undefined}
-      className="min-h-screen"
-    />
+    <>
+      <AnalyticsTracker pageId={page.id} />
+      <PageRenderer 
+        data={page.content} 
+        theme={page.theme?.config as ThemeConfig | undefined}
+        className="min-h-screen"
+      />
+    </>
   );
 }

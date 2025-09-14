@@ -34,16 +34,13 @@ export const LinkButton = ({ title, url, description, icon, style, size, openInN
   const handleClick = () => {
     // Track click analytics
     if (typeof window !== 'undefined') {
-      import('../analytics-tracker').then(({ getAnalytics }) => {
-        const analytics = getAnalytics();
-        analytics.trackClick(
-          window.location.pathname.split('/').pop() || 'unknown',
-          'LinkButton',
-          'LinkButton',
-          url,
-          title
-        );
-      });
+      if (window.__ANALYTICS_ENABLED__) {
+        import('../analytics-tracker').then(({ getAnalytics }) => {
+          const analytics = getAnalytics();
+          // pageId is managed by tracker (stored from page view)
+          analytics.trackClick(undefined, 'LinkButton', 'LinkButton', url, title);
+        });
+      }
       
       window.open(url, openInNewTab ? '_blank' : '_self');
     }

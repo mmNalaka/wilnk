@@ -2,8 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Button } from "@/components/ui/button";
-import { Home, BarChart3, Settings, Plus, Palette } from "lucide-react";
+import { Home, BarChart3, Settings, Palette } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const navItems = [
@@ -54,15 +53,6 @@ export function MainNav() {
             </div>
           </Link>
         ))}
-      </div>
-
-      <div className="ml-auto flex items-center space-x-4">
-        <Link href="/editor/new">
-          <Button size="sm" className="flex items-center gap-2">
-            <Plus className="h-4 w-4" />
-            <span className="hidden sm:inline">New Page</span>
-          </Button>
-        </Link>
       </div>
     </nav>
   );

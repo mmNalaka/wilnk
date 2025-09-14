@@ -148,9 +148,15 @@ export const analyticsRouter = {
           )
         );
 
-      const totalViews = totalViewsResult.count;
-      const totalClicks = totalClicksResult.count;
-      const uniqueVisitors = Number(uniqueVisitorsResult.count);
+      const toNumber = (v: unknown) => {
+        if (typeof v === 'number') return v;
+        if (typeof v === 'bigint') return Number(v);
+        return Number(v as string);
+      };
+
+      const totalViews = toNumber(totalViewsResult.count);
+      const totalClicks = toNumber(totalClicksResult.count);
+      const uniqueVisitors = toNumber(uniqueVisitorsResult.count);
       const clickThroughRate = totalViews > 0 ? (totalClicks / totalViews) * 100 : 0;
 
       // Top pages
@@ -173,6 +179,23 @@ export const analyticsRouter = {
         .orderBy(desc(count(pageViews.id)))
         .limit(5);
 
+      // Clicks per page for top pages
+      const topPageIds = topPages.map(p => p.id);
+      let clicksByPage: Record<string, number> = {};
+      if (topPageIds.length > 0) {
+        const clicksRows = await db
+          .select({ pageId: clickEvents.pageId, clicks: count() })
+          .from(clickEvents)
+          .where(
+            and(
+              sql`${clickEvents.pageId} IN ${topPageIds}`,
+              gte(clickEvents.clickedAt, startDate)
+            )
+          )
+          .groupBy(clickEvents.pageId);
+        clicksByPage = Object.fromEntries(clicksRows.map(r => [r.pageId, toNumber(r.clicks)]));
+      }
+
       // Top countries
       const topCountries = await db
         .select({
@@ -191,10 +214,24 @@ export const analyticsRouter = {
         .limit(5);
 
       // Daily stats
-      const dailyStats = await db
+      const dailyViews = await db
         .select({
           date: sql`DATE(${pageViews.viewedAt})`.as('date'),
           views: count(pageViews.id),
+        })
+        .from(pageViews)
+        .where(
+          and(
+            sql`${pageViews.pageId} IN ${pageIds}`,
+            gte(pageViews.viewedAt, startDate)
+          )
+        )
+        .groupBy(sql`DATE(${pageViews.viewedAt})`)
+        .orderBy(sql`DATE(${pageViews.viewedAt})`);
+
+      const dailyVisitors = await db
+        .select({
+          date: sql`DATE(${pageViews.viewedAt})`.as('date'),
           visitors: sql`COUNT(DISTINCT ${pageViews.visitorId})`,
         })
         .from(pageViews)
@@ -206,6 +243,21 @@ export const analyticsRouter = {
         )
         .groupBy(sql`DATE(${pageViews.viewedAt})`)
         .orderBy(sql`DATE(${pageViews.viewedAt})`);
+
+      const dailyClicks = await db
+        .select({
+          date: sql`DATE(${clickEvents.clickedAt})`.as('date'),
+          clicks: count(),
+        })
+        .from(clickEvents)
+        .where(
+          and(
+            sql`${clickEvents.pageId} IN ${pageIds}`,
+            gte(clickEvents.clickedAt, startDate)
+          )
+        )
+        .groupBy(sql`DATE(${clickEvents.clickedAt})`)
+        .orderBy(sql`DATE(${clickEvents.clickedAt})`);
 
       // Top referrers
       const topReferrers = await db
@@ -227,36 +279,45 @@ export const analyticsRouter = {
       // Calculate percentages for countries and referrers
       const topCountriesWithPercentage = topCountries.map(country => ({
         country: country.country || "Unknown",
-        views: country.views,
-        percentage: totalViews > 0 ? (country.views / totalViews) * 100 : 0,
+        views: toNumber(country.views),
+        percentage: totalViews > 0 ? (toNumber(country.views) / totalViews) * 100 : 0,
       }));
 
       const topReferrersWithPercentage = topReferrers.map(referrer => ({
         referrer: referrer.referrer || "Direct",
-        views: referrer.views,
-        percentage: totalViews > 0 ? (referrer.views / totalViews) * 100 : 0,
+        views: toNumber(referrer.views),
+        percentage: totalViews > 0 ? (toNumber(referrer.views) / totalViews) * 100 : 0,
       }));
 
       return {
-        totalViews,
-        totalClicks,
-        uniqueVisitors,
+        totalViews: toNumber(totalViews),
+        totalClicks: toNumber(totalClicks),
+        uniqueVisitors: toNumber(uniqueVisitors),
         clickThroughRate: Math.round(clickThroughRate * 10) / 10,
-        topPages: topPages.map(page => ({
-          id: page.id,
-          title: page.title,
-          slug: page.slug,
-          views: page.views,
-          clicks: 0, // TODO: Calculate clicks per page
-          ctr: 0, // TODO: Calculate CTR per page
-        })),
+        topPages: topPages.map(page => {
+          const viewsNum = toNumber(page.views);
+          const clicksNum = toNumber(clicksByPage[page.id] ?? 0);
+          const ctr = viewsNum > 0 ? (clicksNum / viewsNum) * 100 : 0;
+          return {
+            id: page.id,
+            title: page.title,
+            slug: page.slug,
+            views: viewsNum,
+            clicks: clicksNum,
+            ctr: Math.round(ctr * 10) / 10,
+          };
+        }),
         topCountries: topCountriesWithPercentage,
-        dailyStats: dailyStats.map(stat => ({
-          date: stat.date as string,
-          views: stat.views,
-          clicks: 0, // TODO: Add clicks to daily stats
-          visitors: Number(stat.visitors),
-        })),
+        dailyStats: (() => {
+          const clicksByDate = Object.fromEntries(dailyClicks.map(dc => [String(dc.date), toNumber(dc.clicks)]));
+          const visitorsByDate = Object.fromEntries(dailyVisitors.map(dv => [String(dv.date), toNumber(dv.visitors)]));
+          return dailyViews.map(dv => ({
+            date: String(dv.date),
+            views: toNumber(dv.views),
+            clicks: clicksByDate[String(dv.date)] ?? 0,
+            visitors: visitorsByDate[String(dv.date)] ?? 0,
+          }));
+        })(),
         topReferrers: topReferrersWithPercentage,
       };
     }),

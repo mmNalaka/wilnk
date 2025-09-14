@@ -2,14 +2,12 @@
 
 import { Render, Data } from "@measured/puck";
 import { puckConfig } from "./config";
-import { AnalyticsTracker } from "./analytics-tracker";
 import "@measured/puck/puck.css";
 import { cn } from "@/lib/utils";
 import type { ThemeConfig } from "@/types/types";
 
 interface PageRendererProps {
   data: Data;
-  pageId?: string;
   className?: string;
   // Accept either structured ThemeConfig or a flat key-value map of CSS variables
   theme?: ThemeConfig | Record<string, string>;
@@ -17,7 +15,6 @@ interface PageRendererProps {
 
 export const PageRenderer = ({
   data,
-  pageId,
   className,
   theme,
 }: PageRendererProps) => {
@@ -108,7 +105,6 @@ export const PageRenderer = ({
           className
         )}
       >
-        {pageId && <AnalyticsTracker pageId={pageId} />}
         <div className="max-w-md mx-auto px-4 py-4">
           <Render config={puckConfig} data={data} />
         </div>

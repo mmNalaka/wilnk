@@ -1,11 +1,12 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Eye, MousePointer, TrendingUp, Users, Calendar, ExternalLink } from "lucide-react";
+import { api } from "@/lib/api-client";
 
 interface AnalyticsData {
   totalViews: number;
@@ -38,90 +39,28 @@ interface AnalyticsData {
   }>;
 }
 
-// Mock analytics service
-const mockAnalyticsService = {
-  async getAnalytics(): Promise<AnalyticsData> {
-    // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    return {
-      totalViews: 12847,
-      totalClicks: 3421,
-      uniqueVisitors: 8932,
-      clickThroughRate: 26.6,
-      topPages: [
-        {
-          id: "1",
-          title: "My Social Links",
-          slug: "johndoe",
-          views: 5432,
-          clicks: 1234,
-          ctr: 22.7,
-        },
-        {
-          id: "2", 
-          title: "Creative Portfolio",
-          slug: "jane-creative",
-          views: 3210,
-          clicks: 987,
-          ctr: 30.7,
-        },
-        {
-          id: "3",
-          title: "Business Links",
-          slug: "mybusiness",
-          views: 2105,
-          clicks: 543,
-          ctr: 25.8,
-        },
-      ],
-      topCountries: [
-        { country: "United States", views: 4521, percentage: 35.2 },
-        { country: "United Kingdom", views: 2134, percentage: 16.6 },
-        { country: "Canada", views: 1876, percentage: 14.6 },
-        { country: "Australia", views: 1234, percentage: 9.6 },
-        { country: "Germany", views: 987, percentage: 7.7 },
-      ],
-      dailyStats: [
-        { date: "2024-01-01", views: 234, clicks: 67, visitors: 189 },
-        { date: "2024-01-02", views: 345, clicks: 89, visitors: 267 },
-        { date: "2024-01-03", views: 456, clicks: 123, visitors: 334 },
-        { date: "2024-01-04", views: 567, clicks: 145, visitors: 423 },
-        { date: "2024-01-05", views: 432, clicks: 98, visitors: 356 },
-        { date: "2024-01-06", views: 654, clicks: 187, visitors: 498 },
-        { date: "2024-01-07", views: 789, clicks: 234, visitors: 612 },
-      ],
-      topReferrers: [
-        { referrer: "Direct", views: 5432, percentage: 42.3 },
-        { referrer: "Instagram", views: 2134, percentage: 16.6 },
-        { referrer: "Twitter", views: 1876, percentage: 14.6 },
-        { referrer: "TikTok", views: 1234, percentage: 9.6 },
-        { referrer: "LinkedIn", views: 987, percentage: 7.7 },
-      ],
-    };
-  },
-};
+type TimeRange = "7d" | "30d" | "90d" | "1y";
 
 export default function AnalyticsPage() {
   const [analytics, setAnalytics] = useState<AnalyticsData | null>(null);
   const [loading, setLoading] = useState(true);
-  const [timeRange, setTimeRange] = useState("7d");
+  const [timeRange, setTimeRange] = useState<TimeRange>("7d");
 
-  useEffect(() => {
-    loadAnalytics();
-  }, [timeRange]);
-
-  const loadAnalytics = async () => {
+  const loadAnalytics = useCallback(async () => {
     setLoading(true);
     try {
-      const data = await mockAnalyticsService.getAnalytics();
+      const data = await api.analytics.overview({ timeRange });
       setAnalytics(data);
     } catch (error) {
       console.error("Failed to load analytics:", error);
     } finally {
       setLoading(false);
     }
-  };
+  }, [timeRange]);
+
+  useEffect(() => {
+    loadAnalytics();
+  }, [loadAnalytics]);
 
   if (loading) {
     return (
@@ -161,7 +100,7 @@ export default function AnalyticsPage() {
     <div className="container mx-auto py-8 space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold">Analytics</h1>
-        <Select value={timeRange} onValueChange={setTimeRange}>
+        <Select value={timeRange} onValueChange={(v) => setTimeRange(v as TimeRange)}>
           <SelectTrigger className="w-[180px]">
             <SelectValue placeholder="Select time range" />
           </SelectTrigger>
@@ -183,10 +122,6 @@ export default function AnalyticsPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{analytics.totalViews.toLocaleString()}</div>
-            <p className="text-xs text-muted-foreground">
-              <TrendingUp className="inline h-3 w-3 mr-1" />
-              +12% from last period
-            </p>
           </CardContent>
         </Card>
 
@@ -197,10 +132,6 @@ export default function AnalyticsPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{analytics.totalClicks.toLocaleString()}</div>
-            <p className="text-xs text-muted-foreground">
-              <TrendingUp className="inline h-3 w-3 mr-1" />
-              +8% from last period
-            </p>
           </CardContent>
         </Card>
 
@@ -211,10 +142,6 @@ export default function AnalyticsPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{analytics.uniqueVisitors.toLocaleString()}</div>
-            <p className="text-xs text-muted-foreground">
-              <TrendingUp className="inline h-3 w-3 mr-1" />
-              +15% from last period
-            </p>
           </CardContent>
         </Card>
 
@@ -225,10 +152,6 @@ export default function AnalyticsPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{analytics.clickThroughRate}%</div>
-            <p className="text-xs text-muted-foreground">
-              <TrendingUp className="inline h-3 w-3 mr-1" />
-              +2.1% from last period
-            </p>
           </CardContent>
         </Card>
       </div>
@@ -295,22 +218,88 @@ export default function AnalyticsPage() {
           </CardContent>
         </Card>
 
-        {/* Daily Stats Chart Placeholder */}
+        {/* Daily Activity (inline SVG bar chart) */}
         <Card>
           <CardHeader>
             <CardTitle>Daily Activity</CardTitle>
             <CardDescription>Views and clicks over time</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="h-64 flex items-center justify-center border-2 border-dashed border-gray-200 rounded">
-              <div className="text-center">
-                <Calendar className="h-8 w-8 mx-auto text-muted-foreground mb-2" />
-                <p className="text-sm text-muted-foreground">Chart visualization would go here</p>
-                <p className="text-xs text-muted-foreground mt-1">
-                  Integration with charting library needed
-                </p>
+            {analytics.dailyStats.length === 0 ? (
+              <div className="h-64 flex items-center justify-center border-2 border-dashed border-gray-200 rounded">
+                <div className="text-center">
+                  <Calendar className="h-8 w-8 mx-auto text-muted-foreground mb-2" />
+                  <p className="text-sm text-muted-foreground">No activity for the selected period</p>
+                </div>
               </div>
-            </div>
+            ) : (
+              <div className="w-full">
+                {/* Simple legend */}
+                <div className="flex items-center gap-4 text-sm mb-3">
+                  <div className="flex items-center gap-2"><span className="inline-block w-3 h-3 rounded-sm bg-primary" /> Views</div>
+                  <div className="flex items-center gap-2"><span className="inline-block w-3 h-3 rounded-sm bg-muted-foreground/60" /> Clicks</div>
+                </div>
+                {(() => {
+                  const data = analytics.dailyStats;
+                  const max = Math.max(...data.map(d => Math.max(d.views, d.clicks)), 1);
+                  const padding = { top: 10, right: 10, bottom: 24, left: 10 };
+                  const height = 200;
+                  const width = 700; // viewBox width (will scale to container)
+                  const innerH = height - padding.top - padding.bottom;
+                  const n = data.length;
+                  const groupW = width / n;
+                  const barGap = 6;
+                  const barW = (groupW - barGap * 3) / 2; // views + gap + clicks centered
+                  const dateLabels = data.map(d => d.date.slice(5)); // MM-DD
+
+                  return (
+                    <div className="w-full overflow-x-auto">
+                      <svg viewBox={`0 0 ${width} ${height}`} className="w-full min-w-[600px] h-64">
+                        {/* Y grid (3 lines) */}
+                        {[0, 0.5, 1].map((t, i) => {
+                          const y = padding.top + innerH * (1 - t);
+                          return (
+                            <g key={i}>
+                              <line x1={padding.left} y1={y} x2={width - padding.right} y2={y} stroke="#e5e7eb" strokeWidth={1} />
+                              <text x={width - padding.right} y={y - 2} textAnchor="end" fontSize={10} fill="#9ca3af">
+                                {Math.round(max * t)}
+                              </text>
+                            </g>
+                          );
+                        })}
+
+                        {/* Bars */}
+                        {data.map((d, idx) => {
+                          const x0 = idx * groupW + padding.left;
+                          const vH = (d.views / max) * innerH;
+                          const cH = (d.clicks / max) * innerH;
+                          const vx = x0 + barGap;
+                          const cx = vx + barW + barGap;
+                          const vy = padding.top + innerH - vH;
+                          const cy = padding.top + innerH - cH;
+                          return (
+                            <g key={d.date}>
+                              <rect x={vx} y={vy} width={barW} height={vH} fill="currentColor" className="text-primary" rx={2} />
+                              <rect x={cx} y={cy} width={barW} height={cH} fill="#9ca3af" rx={2} />
+                            </g>
+                          );
+                        })}
+
+                        {/* X axis labels */}
+                        {dateLabels.map((label, idx) => {
+                          const x = idx * groupW + padding.left + groupW / 2;
+                          return (
+                            <text key={idx} x={x} y={height - 6} textAnchor="middle" fontSize={10} fill="#6b7280">
+                              {label}
+                            </text>
+                          );
+                        })}
+                      </svg>
+                    </div>
+                  );
+                })()}
+              </div>
+            )}
           </CardContent>
         </Card>
 
