@@ -8,7 +8,7 @@ export class PagesAnalytics {
    */
   async getViewCount(pageId: string, days?: number): Promise<number> {
     const conditions = [eq(pageViews.pageId, pageId)];
-    
+
     if (days) {
       const startDate = new Date();
       startDate.setDate(startDate.getDate() - days);
@@ -28,7 +28,7 @@ export class PagesAnalytics {
    */
   async getClickCount(pageId: string, days?: number): Promise<number> {
     const conditions = [eq(clickEvents.pageId, pageId)];
-    
+
     if (days) {
       const startDate = new Date();
       startDate.setDate(startDate.getDate() - days);
@@ -46,7 +46,9 @@ export class PagesAnalytics {
   /**
    * Get analytics for multiple pages
    */
-  async getAnalyticsForPages(pageIds: string[]): Promise<Map<string, { viewCount: number; clickCount: number }>> {
+  async getAnalyticsForPages(
+    pageIds: string[],
+  ): Promise<Map<string, { viewCount: number; clickCount: number }>> {
     if (pageIds.length === 0) {
       return new Map();
     }
@@ -72,10 +74,13 @@ export class PagesAnalytics {
       .groupBy(clickEvents.pageId);
 
     // Combine results
-    const analytics = new Map<string, { viewCount: number; clickCount: number }>();
-    
+    const analytics = new Map<
+      string,
+      { viewCount: number; clickCount: number }
+    >();
+
     // Initialize all pages with zero counts
-    pageIds.forEach(id => {
+    pageIds.forEach((id) => {
       analytics.set(id, { viewCount: 0, clickCount: 0 });
     });
 
@@ -101,19 +106,22 @@ export class PagesAnalytics {
   /**
    * Record a page view
    */
-  async recordPageView(pageId: string, visitorData: {
-    visitorId?: string;
-    sessionId?: string;
-    country?: string;
-    city?: string;
-    userAgent?: string;
-    deviceType?: string;
-    browser?: string;
-    referrer?: string;
-    utmSource?: string;
-    utmMedium?: string;
-    utmCampaign?: string;
-  } = {}): Promise<void> {
+  async recordPageView(
+    pageId: string,
+    visitorData: {
+      visitorId?: string;
+      sessionId?: string;
+      country?: string;
+      city?: string;
+      userAgent?: string;
+      deviceType?: string;
+      browser?: string;
+      referrer?: string;
+      utmSource?: string;
+      utmMedium?: string;
+      utmCampaign?: string;
+    } = {},
+  ): Promise<void> {
     await db.insert(pageViews).values({
       id: crypto.randomUUID(),
       pageId,
@@ -125,20 +133,23 @@ export class PagesAnalytics {
   /**
    * Record a click event
    */
-  async recordClickEvent(pageId: string, clickData: {
-    blockId?: string;
-    blockType?: string;
-    url?: string;
-    label?: string;
-    visitorId?: string;
-    sessionId?: string;
-    country?: string;
-    city?: string;
-    userAgent?: string;
-    deviceType?: string;
-    browser?: string;
-    referrer?: string;
-  } = {}): Promise<void> {
+  async recordClickEvent(
+    pageId: string,
+    clickData: {
+      blockId?: string;
+      blockType?: string;
+      url?: string;
+      label?: string;
+      visitorId?: string;
+      sessionId?: string;
+      country?: string;
+      city?: string;
+      userAgent?: string;
+      deviceType?: string;
+      browser?: string;
+      referrer?: string;
+    } = {},
+  ): Promise<void> {
     await db.insert(clickEvents).values({
       id: crypto.randomUUID(),
       pageId,

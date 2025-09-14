@@ -20,7 +20,7 @@ export default function EditorPage() {
     data: pageData,
     isLoading,
     error,
-  } = useQuery(orpc.pages.get.queryOptions({ input: { pageId }}));
+  } = useQuery(orpc.pages.get.queryOptions({ input: { pageId } }));
 
   // Mutations
   const updateMutation = useMutation(
@@ -32,7 +32,7 @@ export default function EditorPage() {
       onError: (error) => {
         toast.error("Failed to update page: " + error.message);
       },
-    })
+    }),
   );
 
   // Event handlers

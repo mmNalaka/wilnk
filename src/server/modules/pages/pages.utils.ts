@@ -42,18 +42,24 @@ export function sanitizeTitle(title: string): string {
 /**
  * Check if a page is published
  */
-export function isPagePublished(status: string, publishedAt: Date | null): boolean {
+export function isPagePublished(
+  status: string,
+  publishedAt: Date | null,
+): boolean {
   return status === "published" || !!publishedAt;
 }
 
 /**
  * Get page status display text
  */
-export function getPageStatusText(status: string, publishedAt: Date | null): string {
+export function getPageStatusText(
+  status: string,
+  publishedAt: Date | null,
+): string {
   if (isPagePublished(status, publishedAt)) {
     return "Published";
   }
-  
+
   switch (status) {
     case "draft":
       return "Draft";

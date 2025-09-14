@@ -2,12 +2,24 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
@@ -30,12 +42,13 @@ interface UserSettings {
 // Mock settings service
 const mockSettingsService = {
   async getSettings(): Promise<UserSettings> {
-    await new Promise(resolve => setTimeout(resolve, 500));
+    await new Promise((resolve) => setTimeout(resolve, 500));
     return {
       name: "John Doe",
       email: "john@example.com",
       bio: "Digital creator and entrepreneur",
-      avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face",
+      avatar:
+        "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face",
       plan: "pro",
       emailNotifications: true,
       analyticsEmails: true,
@@ -47,12 +60,12 @@ const mockSettingsService = {
   },
 
   async updateSettings(settings: Partial<UserSettings>): Promise<void> {
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    await new Promise((resolve) => setTimeout(resolve, 1000));
     console.log("Settings updated:", settings);
   },
 
   async deleteAccount(): Promise<void> {
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    await new Promise((resolve) => setTimeout(resolve, 1000));
     console.log("Account deleted");
   },
 };
@@ -81,7 +94,7 @@ export default function SettingsPage() {
 
   const handleSave = async () => {
     if (!settings) return;
-    
+
     setSaving(true);
     try {
       await mockSettingsService.updateSettings(settings);
@@ -95,7 +108,7 @@ export default function SettingsPage() {
 
   const handleDeleteAccount = async () => {
     if (deleteConfirm !== "DELETE") return;
-    
+
     try {
       await mockSettingsService.deleteAccount();
       // Redirect to goodbye page
@@ -142,7 +155,11 @@ export default function SettingsPage() {
     <div className="container mx-auto py-8 space-y-6 max-w-4xl">
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold">Settings</h1>
-        <Button onClick={handleSave} disabled={saving} className="flex items-center gap-2">
+        <Button
+          onClick={handleSave}
+          disabled={saving}
+          className="flex items-center gap-2"
+        >
           <Save className="h-4 w-4" />
           {saving ? "Saving..." : "Save Changes"}
         </Button>
@@ -161,7 +178,6 @@ export default function SettingsPage() {
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="flex items-center gap-4">
-
             <div className="flex-1">
               <Label htmlFor="avatar">Avatar URL</Label>
               <Input
@@ -267,9 +283,7 @@ export default function SettingsPage() {
 
           <div className="flex gap-2">
             <Button variant="outline">Manage Billing</Button>
-            {settings.plan === "free" && (
-              <Button>Upgrade to Pro</Button>
-            )}
+            {settings.plan === "free" && <Button>Upgrade to Pro</Button>}
           </div>
         </CardContent>
       </Card>
@@ -295,7 +309,9 @@ export default function SettingsPage() {
             </div>
             <Switch
               checked={settings.emailNotifications}
-              onCheckedChange={(checked) => updateSetting("emailNotifications", checked)}
+              onCheckedChange={(checked) =>
+                updateSetting("emailNotifications", checked)
+              }
             />
           </div>
 
@@ -310,7 +326,9 @@ export default function SettingsPage() {
             </div>
             <Switch
               checked={settings.analyticsEmails}
-              onCheckedChange={(checked) => updateSetting("analyticsEmails", checked)}
+              onCheckedChange={(checked) =>
+                updateSetting("analyticsEmails", checked)
+              }
             />
           </div>
 
@@ -323,7 +341,9 @@ export default function SettingsPage() {
             </div>
             <Switch
               checked={settings.marketingEmails}
-              onCheckedChange={(checked) => updateSetting("marketingEmails", checked)}
+              onCheckedChange={(checked) =>
+                updateSetting("marketingEmails", checked)
+              }
             />
           </div>
         </CardContent>
@@ -336,9 +356,7 @@ export default function SettingsPage() {
             <Shield className="h-5 w-5" />
             Security
           </CardTitle>
-          <CardDescription>
-            Keep your account secure
-          </CardDescription>
+          <CardDescription>Keep your account secure</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="flex items-center justify-between">
@@ -350,7 +368,9 @@ export default function SettingsPage() {
             </div>
             <Switch
               checked={settings.twoFactorEnabled}
-              onCheckedChange={(checked) => updateSetting("twoFactorEnabled", checked)}
+              onCheckedChange={(checked) =>
+                updateSetting("twoFactorEnabled", checked)
+              }
             />
           </div>
 
@@ -378,10 +398,10 @@ export default function SettingsPage() {
           <div className="p-4 border border-red-200 rounded-lg bg-red-50">
             <h3 className="font-medium text-red-800 mb-2">Delete Account</h3>
             <p className="text-sm text-red-700 mb-4">
-              This will permanently delete your account and all associated data. 
+              This will permanently delete your account and all associated data.
               This action cannot be undone.
             </p>
-            
+
             <div className="space-y-2">
               <Label htmlFor="deleteConfirm" className="text-red-800">
                 Type &quot;DELETE&quot; to confirm
@@ -394,7 +414,7 @@ export default function SettingsPage() {
                 className="max-w-xs"
               />
             </div>
-            
+
             <Button
               variant="destructive"
               className="mt-4"

@@ -21,8 +21,10 @@ import { ChevronDown } from "lucide-react";
 // Using native HTML color input instead of the shadcn color picker
 
 // Helpers to support the native <input type="color"> which expects #rrggbb
-const clamp = (n: number, min: number, max: number) => Math.max(min, Math.min(max, n));
-const toHex2 = (n: number) => clamp(Math.round(n), 0, 255).toString(16).padStart(2, "0");
+const clamp = (n: number, min: number, max: number) =>
+  Math.max(min, Math.min(max, n));
+const toHex2 = (n: number) =>
+  clamp(Math.round(n), 0, 255).toString(16).padStart(2, "0");
 const hslToRgb = (h: number, s: number, l: number) => {
   // h in [0,360), s,l in [0,1]
   const c = (1 - Math.abs(2 * l - 1)) * s;
@@ -95,7 +97,7 @@ export const toHex = (val?: string) => {
   }
   // rgb/rgba
   const mRgb = v.match(
-    /^rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)(?:\s*,\s*([\d.]+))?\s*\)$/i
+    /^rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)(?:\s*,\s*([\d.]+))?\s*\)$/i,
   );
   if (mRgb) {
     const r = clamp(parseInt(mRgb[1], 10), 0, 255);
@@ -105,7 +107,7 @@ export const toHex = (val?: string) => {
   }
   // hsl/hsla
   const mHsl = v.match(
-    /^hsla?\(\s*([\d.]+)\s*,\s*([\d.]+)%\s*,\s*([\d.]+)%(?:\s*,\s*([\d.]+))?\s*\)$/i
+    /^hsla?\(\s*([\d.]+)\s*,\s*([\d.]+)%\s*,\s*([\d.]+)%(?:\s*,\s*([\d.]+))?\s*\)$/i,
   );
   if (mHsl) {
     const h = parseFloat(mHsl[1]);
@@ -116,12 +118,14 @@ export const toHex = (val?: string) => {
   }
   // oklch(L C h)
   const mOklch = v.match(
-    /^oklch\(\s*([\d.+-]+%?)\s+([\d.+-]+)\s+([\d.+-]+)(?:deg)?(?:\s*\/\s*([\d.]+))?\s*\)$/i
+    /^oklch\(\s*([\d.+-]+%?)\s+([\d.+-]+)\s+([\d.+-]+)(?:deg)?(?:\s*\/\s*([\d.]+))?\s*\)$/i,
   );
   if (mOklch) {
     // L may be 0..1 or in %
     const Lraw = mOklch[1];
-    const L = Lraw.endsWith("%") ? clamp(parseFloat(Lraw) / 100, 0, 1) : clamp(parseFloat(Lraw), 0, 1);
+    const L = Lraw.endsWith("%")
+      ? clamp(parseFloat(Lraw) / 100, 0, 1)
+      : clamp(parseFloat(Lraw), 0, 1);
     const C = clamp(parseFloat(mOklch[2]), 0, 1.5); // allow up to ~1.5 though most themes use small C
     const H = parseFloat(mOklch[3]);
     const [r, g, b] = oklchToRgb(L, C, H);
@@ -129,11 +133,13 @@ export const toHex = (val?: string) => {
   }
   // oklab(L a b)
   const mOklab = v.match(
-    /^oklab\(\s*([\d.+-]+%?)\s+([\d.+-]+)\s+([\d.+-]+)(?:\s*\/\s*([\d.]+))?\s*\)$/i
+    /^oklab\(\s*([\d.+-]+%?)\s+([\d.+-]+)\s+([\d.+-]+)(?:\s*\/\s*([\d.]+))?\s*\)$/i,
   );
   if (mOklab) {
     const Lraw = mOklab[1];
-    const L = Lraw.endsWith("%") ? clamp(parseFloat(Lraw) / 100, 0, 1) : clamp(parseFloat(Lraw), 0, 1);
+    const L = Lraw.endsWith("%")
+      ? clamp(parseFloat(Lraw) / 100, 0, 1)
+      : clamp(parseFloat(Lraw), 0, 1);
     const a = parseFloat(mOklab[2]);
     const b = parseFloat(mOklab[3]);
     const [r, g, bC] = oklabToRgb(L, a, b);
@@ -166,8 +172,7 @@ const DEFAULT_VARS: Record<string, string> = {
   "--ring": toHex("oklch(0.7080 0 0)"),
   "--font-sans":
     "ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'",
-  "--font-serif":
-    'ui-serif, Georgia, Cambria, "Times New Roman", Times, serif',
+  "--font-serif": 'ui-serif, Georgia, Cambria, "Times New Roman", Times, serif',
   "--font-mono":
     'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
   "--radius": "0.625rem",
@@ -215,7 +220,7 @@ export function ThemeEditorInline({
       .filter((f) => f.type !== "color")
       .map((f) => f.key);
     const nonColorDefaults: Record<string, string> = Object.fromEntries(
-      nonColorKeys.map((k) => [k, DEFAULT_VARS[k] ?? ""]) 
+      nonColorKeys.map((k) => [k, DEFAULT_VARS[k] ?? ""]),
     );
     return {
       ...emptyThemeFromGroups(),
@@ -225,7 +230,7 @@ export function ThemeEditorInline({
   }, []);
 
   const [config, setConfig] = useState<Record<string, string>>(() =>
-    buildInitialConfig(initialConfig)
+    buildInitialConfig(initialConfig),
   );
 
   useEffect(() => {
@@ -242,7 +247,7 @@ export function ThemeEditorInline({
         onSaved?.(theme.id);
       },
       onError: (e) => toast.error(`Failed to create theme: ${e.message}`),
-    })
+    }),
   );
 
   const updateMutation = useMutation(
@@ -257,7 +262,7 @@ export function ThemeEditorInline({
         onSaved?.(theme.id);
       },
       onError: (e) => toast.error(`Failed to update theme: ${e.message}`),
-    })
+    }),
   );
 
   const isEditing = Boolean(themeId);
@@ -287,7 +292,6 @@ export function ThemeEditorInline({
   const setVar = (key: string, value: string) => {
     setConfig((prev) => ({ ...prev, [key]: value }));
   };
-
 
   const leftColumn = (
     <div className="space-y-4">
@@ -384,7 +388,7 @@ export function ThemeEditorInline({
         theme={useMemo(() => {
           const entries = Object.entries(config);
           const filtered = entries.filter(
-            ([, v]) => typeof v === "string" && v.trim() !== ""
+            ([, v]) => typeof v === "string" && v.trim() !== "",
           );
           return Object.fromEntries(filtered);
         }, [config])}
@@ -412,8 +416,8 @@ export function ThemeEditorInline({
               ? "Updating..."
               : "Update Theme"
             : createMutation.isPending
-            ? "Creating..."
-            : "Save Theme"}
+              ? "Creating..."
+              : "Save Theme"}
         </Button>
       </div>
     </div>

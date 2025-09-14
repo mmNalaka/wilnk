@@ -20,51 +20,51 @@ import {
 import { useEffect } from "react";
 
 export default function SignUpForm() {
-	const router = useRouter();
-	const { isPending, data } = authClient.useSession();
+  const router = useRouter();
+  const { isPending, data } = authClient.useSession();
 
-	useEffect(() => {
-		if (!isPending && data?.user) {
-			router.push("/dashboard");
-		}
-	}, [data, isPending, router]);
+  useEffect(() => {
+    if (!isPending && data?.user) {
+      router.push("/dashboard");
+    }
+  }, [data, isPending, router]);
 
-	const form = useForm({
-		defaultValues: {
-			email: "",
-			password: "",
-			name: "",
-		},
-		onSubmit: async ({ value }) => {
-			await authClient.signUp.email(
-				{
-					email: value.email,
-					password: value.password,
-					name: value.name,
-				},
-				{
-					onSuccess: () => {
-						router.push("/dashboard");
-						toast.success("Sign up successful");
-					},
-					onError: (error) => {
-						toast.error(error.error.message);
-					},
-				},
-			);
-		},
-		validators: {
-			onSubmit: z.object({
-				name: z.string().min(2, "Name must be at least 2 characters"),
-				email: z.email("Invalid email address"),
-				password: z.string().min(8, "Password must be at least 8 characters"),
-			}),
-		},
-	});
+  const form = useForm({
+    defaultValues: {
+      email: "",
+      password: "",
+      name: "",
+    },
+    onSubmit: async ({ value }) => {
+      await authClient.signUp.email(
+        {
+          email: value.email,
+          password: value.password,
+          name: value.name,
+        },
+        {
+          onSuccess: () => {
+            router.push("/dashboard");
+            toast.success("Sign up successful");
+          },
+          onError: (error) => {
+            toast.error(error.error.message);
+          },
+        },
+      );
+    },
+    validators: {
+      onSubmit: z.object({
+        name: z.string().min(2, "Name must be at least 2 characters"),
+        email: z.email("Invalid email address"),
+        password: z.string().min(8, "Password must be at least 8 characters"),
+      }),
+    },
+  });
 
-	if (isPending || (!isPending && data?.user)) {
-		return <Loader />;
-	}
+  if (isPending || (!isPending && data?.user)) {
+    return <Loader />;
+  }
 
   return (
     <div className="flex flex-col gap-6">
@@ -86,11 +86,17 @@ export default function SignUpForm() {
           >
             <div className="grid gap-6">
               <div className="flex flex-col gap-4">
-                <Button variant="outline" className="w-full">Sign up with Apple</Button>
-                <Button variant="outline" className="w-full">Sign up with Google</Button>
+                <Button variant="outline" className="w-full">
+                  Sign up with Apple
+                </Button>
+                <Button variant="outline" className="w-full">
+                  Sign up with Google
+                </Button>
               </div>
               <div className="relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-border after:border-t">
-                <span className="relative z-10 bg-card px-2 text-muted-foreground">Or continue with</span>
+                <span className="relative z-10 bg-card px-2 text-muted-foreground">
+                  Or continue with
+                </span>
               </div>
               <div className="grid gap-6">
                 <div className="grid gap-3">
@@ -98,9 +104,17 @@ export default function SignUpForm() {
                     {(field) => (
                       <div className="space-y-2">
                         <Label htmlFor={field.name}>Name</Label>
-                        <Input id={field.name} name={field.name} value={field.state.value} onBlur={field.handleBlur} onChange={(e) => field.handleChange(e.target.value)} />
+                        <Input
+                          id={field.name}
+                          name={field.name}
+                          value={field.state.value}
+                          onBlur={field.handleBlur}
+                          onChange={(e) => field.handleChange(e.target.value)}
+                        />
                         {field.state.meta.errors.map((error) => (
-                          <p key={error?.message} className="text-red-500">{error?.message}</p>
+                          <p key={error?.message} className="text-red-500">
+                            {error?.message}
+                          </p>
                         ))}
                       </div>
                     )}
@@ -111,9 +125,18 @@ export default function SignUpForm() {
                     {(field) => (
                       <div className="space-y-2">
                         <Label htmlFor={field.name}>Email</Label>
-                        <Input id={field.name} name={field.name} type="email" value={field.state.value} onBlur={field.handleBlur} onChange={(e) => field.handleChange(e.target.value)} />
+                        <Input
+                          id={field.name}
+                          name={field.name}
+                          type="email"
+                          value={field.state.value}
+                          onBlur={field.handleBlur}
+                          onChange={(e) => field.handleChange(e.target.value)}
+                        />
                         {field.state.meta.errors.map((error) => (
-                          <p key={error?.message} className="text-red-500">{error?.message}</p>
+                          <p key={error?.message} className="text-red-500">
+                            {error?.message}
+                          </p>
                         ))}
                       </div>
                     )}
@@ -124,9 +147,18 @@ export default function SignUpForm() {
                     {(field) => (
                       <div className="space-y-2">
                         <Label htmlFor={field.name}>Password</Label>
-                        <Input id={field.name} name={field.name} type="password" value={field.state.value} onBlur={field.handleBlur} onChange={(e) => field.handleChange(e.target.value)} />
+                        <Input
+                          id={field.name}
+                          name={field.name}
+                          type="password"
+                          value={field.state.value}
+                          onBlur={field.handleBlur}
+                          onChange={(e) => field.handleChange(e.target.value)}
+                        />
                         {field.state.meta.errors.map((error) => (
-                          <p key={error?.message} className="text-red-500">{error?.message}</p>
+                          <p key={error?.message} className="text-red-500">
+                            {error?.message}
+                          </p>
                         ))}
                       </div>
                     )}
@@ -134,7 +166,11 @@ export default function SignUpForm() {
                 </div>
                 <form.Subscribe>
                   {(state) => (
-                    <Button type="submit" className="w-full" disabled={!state.canSubmit || state.isSubmitting}>
+                    <Button
+                      type="submit"
+                      className="w-full"
+                      disabled={!state.canSubmit || state.isSubmitting}
+                    >
                       {state.isSubmitting ? "Submitting..." : "Sign Up"}
                     </Button>
                   )}
@@ -143,7 +179,9 @@ export default function SignUpForm() {
             </div>
             <div className="text-center text-sm">
               Already have an account?{" "}
-              <Link href="/login" className="underline underline-offset-4">Sign in</Link>
+              <Link href="/login" className="underline underline-offset-4">
+                Sign in
+              </Link>
             </div>
           </form>
         </CardContent>

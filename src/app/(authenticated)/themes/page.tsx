@@ -4,7 +4,13 @@ import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { orpc } from "@/utils/query-client";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { PreviewSample } from "@/components/themes/preview-sample";
 import { Plus, Pencil, Eye } from "lucide-react";
 import Link from "next/link";
@@ -21,11 +27,13 @@ export default function ThemesPage() {
   const { data } = useQuery(orpc.themes.list.queryOptions({ input: {} }));
   const themes: ThemeListItem[] = useMemo(
     () => (data?.themes as ThemeListItem[] | undefined) ?? [],
-    [data]
+    [data],
   );
 
   // Live preview uses the same mechanism as the editor preview
-  const [livePreviewTheme, setLivePreviewTheme] = useState<Record<string, string> | undefined>(undefined);
+  const [livePreviewTheme, setLivePreviewTheme] = useState<
+    Record<string, string> | undefined
+  >(undefined);
 
   // Group themes by system/custom
   const { systemThemes, customThemes } = useMemo(() => {
@@ -39,7 +47,9 @@ export default function ThemesPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight">Themes</h1>
-          <p className="text-sm text-muted-foreground">Create, edit and manage your themes.</p>
+          <p className="text-sm text-muted-foreground">
+            Create, edit and manage your themes.
+          </p>
         </div>
         <Link href="/themes/new">
           <Button className="flex items-center gap-2">
@@ -58,15 +68,24 @@ export default function ThemesPage() {
             </CardHeader>
             <CardContent className="pt-0">
               {customThemes.length === 0 ? (
-                <div className="text-sm text-muted-foreground">No custom themes yet.</div>
+                <div className="text-sm text-muted-foreground">
+                  No custom themes yet.
+                </div>
               ) : (
                 <div className="divide-y border rounded-md">
                   {customThemes.map((t) => (
-                    <div key={t.id} className="p-3 flex items-start justify-between gap-3">
+                    <div
+                      key={t.id}
+                      className="p-3 flex items-start justify-between gap-3"
+                    >
                       <div className="min-w-0">
-                        <div className="text-sm font-medium truncate">{t.name}</div>
+                        <div className="text-sm font-medium truncate">
+                          {t.name}
+                        </div>
                         {t.description ? (
-                          <div className="text-xs text-muted-foreground line-clamp-1">{t.description}</div>
+                          <div className="text-xs text-muted-foreground line-clamp-1">
+                            {t.description}
+                          </div>
                         ) : null}
                       </div>
                       <div className="flex items-center gap-2 shrink-0">
@@ -78,7 +97,10 @@ export default function ThemesPage() {
                         >
                           <Eye className="h-4 w-4" />
                         </Button>
-                        <Link href={`/themes/${t.id}`} aria-label={`Edit ${t.name}`}>
+                        <Link
+                          href={`/themes/${t.id}`}
+                          aria-label={`Edit ${t.name}`}
+                        >
                           <Button variant="outline" size="icon">
                             <Pencil className="h-4 w-4" />
                           </Button>
@@ -98,18 +120,27 @@ export default function ThemesPage() {
             </CardHeader>
             <CardContent className="pt-0">
               {systemThemes.length === 0 ? (
-                <div className="text-sm text-muted-foreground">No system themes.</div>
+                <div className="text-sm text-muted-foreground">
+                  No system themes.
+                </div>
               ) : (
                 <div className="divide-y border rounded-md">
                   {systemThemes.map((t) => (
-                    <div key={t.id} className="p-3 flex items-start justify-between gap-3">
+                    <div
+                      key={t.id}
+                      className="p-3 flex items-start justify-between gap-3"
+                    >
                       <div className="min-w-0">
                         <div className="text-sm font-medium truncate flex items-center gap-2">
                           <span>{t.name}</span>
-                          <span className="inline-flex items-center rounded px-1.5 py-0.5 text-[10px] font-medium border bg-muted text-muted-foreground">System</span>
+                          <span className="inline-flex items-center rounded px-1.5 py-0.5 text-[10px] font-medium border bg-muted text-muted-foreground">
+                            System
+                          </span>
                         </div>
                         {t.description ? (
-                          <div className="text-xs text-muted-foreground line-clamp-1">{t.description}</div>
+                          <div className="text-xs text-muted-foreground line-clamp-1">
+                            {t.description}
+                          </div>
                         ) : null}
                       </div>
                       <div className="flex items-center gap-2 shrink-0">
@@ -121,7 +152,10 @@ export default function ThemesPage() {
                         >
                           <Eye className="h-4 w-4" />
                         </Button>
-                        <Link href={`/themes/${t.id}`} aria-label={`Edit ${t.name}`}>
+                        <Link
+                          href={`/themes/${t.id}`}
+                          aria-label={`Edit ${t.name}`}
+                        >
                           <Button variant="outline" size="icon">
                             <Pencil className="h-4 w-4" />
                           </Button>
@@ -140,7 +174,9 @@ export default function ThemesPage() {
           <Card>
             <CardHeader>
               <CardTitle>Live Preview</CardTitle>
-              <CardDescription>Select a theme on the left to preview</CardDescription>
+              <CardDescription>
+                Select a theme on the left to preview
+              </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="rounded-lg border p-6">

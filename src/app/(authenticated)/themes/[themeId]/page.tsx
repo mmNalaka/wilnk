@@ -15,18 +15,25 @@ export default function EditThemePage() {
   const themeId = params?.themeId;
 
   const { data, isLoading, isError } = useQuery(
-    orpc.themes.get.queryOptions({ input: { themeId } })
+    orpc.themes.get.queryOptions({ input: { themeId } }),
   );
 
   return (
     <div className="p-6 space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight">{isLoading ? "Loading..." : `Edit Theme`}</h1>
-          <p className="text-sm text-muted-foreground">Adjust variables with the color picker and see a live preview.</p>
+          <h1 className="text-2xl font-semibold tracking-tight">
+            {isLoading ? "Loading..." : `Edit Theme`}
+          </h1>
+          <p className="text-sm text-muted-foreground">
+            Adjust variables with the color picker and see a live preview.
+          </p>
         </div>
         <Link href="/themes">
-          <Button variant="ghost"><ArrowLeft className="mr-2 h-4 w-4" />Back to Themes</Button>
+          <Button variant="ghost">
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Back to Themes
+          </Button>
         </Link>
       </div>
 
@@ -36,9 +43,13 @@ export default function EditThemePage() {
         </CardHeader>
         <CardContent>
           {isLoading ? (
-            <div className="text-sm text-muted-foreground">Loading theme...</div>
+            <div className="text-sm text-muted-foreground">
+              Loading theme...
+            </div>
           ) : isError || !data?.theme ? (
-            <div className="text-sm text-destructive">Failed to load theme.</div>
+            <div className="text-sm text-destructive">
+              Failed to load theme.
+            </div>
           ) : (
             <ThemeEditorInline
               themeId={data.theme.id}

@@ -44,7 +44,7 @@ export function MainNav() {
             href={item.href}
             className={cn(
               "text-sm font-medium transition-colors hover:text-primary",
-              pathname === item.href ? "text-black" : "text-muted-foreground"
+              pathname === item.href ? "text-black" : "text-muted-foreground",
             )}
           >
             <div className="flex items-center space-x-2">

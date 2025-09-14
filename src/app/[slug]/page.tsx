@@ -15,7 +15,7 @@ const pageService = {
     try {
       return await pagesRepository.findPublishedBySlug(slug);
     } catch (error) {
-      console.error('Failed to fetch page by slug:', error);
+      console.error("Failed to fetch page by slug:", error);
       return null;
     }
   },
@@ -33,16 +33,31 @@ export async function generateMetadata({ params }: Params) {
 
   return {
     title: page.title,
-    description: page.metaDescription || (page.content as any)?.content?.find((block: any) => block.type === "ProfileHeader")?.props?.bio || `${page.title} - Link in Bio`,
+    description:
+      page.metaDescription ||
+      (page.content as any)?.content?.find(
+        (block: any) => block.type === "ProfileHeader",
+      )?.props?.bio ||
+      `${page.title} - Link in Bio`,
     openGraph: {
       title: page.metaTitle || page.title,
-      description: page.metaDescription || (page.content as any)?.content?.find((block: any) => block.type === "ProfileHeader")?.props?.bio || `${page.title} - Link in Bio`,
+      description:
+        page.metaDescription ||
+        (page.content as any)?.content?.find(
+          (block: any) => block.type === "ProfileHeader",
+        )?.props?.bio ||
+        `${page.title} - Link in Bio`,
       images: page.favicon ? [{ url: page.favicon }] : undefined,
     },
     twitter: {
-      card: 'summary_large_image',
+      card: "summary_large_image",
       title: page.metaTitle || page.title,
-      description: page.metaDescription || (page.content as any)?.content?.find((block: any) => block.type === "ProfileHeader")?.props?.bio || `${page.title} - Link in Bio`,
+      description:
+        page.metaDescription ||
+        (page.content as any)?.content?.find(
+          (block: any) => block.type === "ProfileHeader",
+        )?.props?.bio ||
+        `${page.title} - Link in Bio`,
       images: page.favicon ? [page.favicon] : undefined,
     },
   };
@@ -59,8 +74,8 @@ export default async function PublicPage({ params }: Params) {
   return (
     <>
       <AnalyticsTracker pageId={page.id} />
-      <PageRenderer 
-        data={page.content} 
+      <PageRenderer
+        data={page.content}
         theme={page.theme?.config as ThemeConfig | undefined}
         className="min-h-screen"
       />

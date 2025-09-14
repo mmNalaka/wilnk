@@ -2,10 +2,7 @@ import { db } from "@/server/db";
 import { themes } from "@/server/db/schema/main.schema";
 import { and, eq, or } from "drizzle-orm";
 import { nanoid } from "nanoid";
-import type {
-  CreateThemeInput,
-  UpdateThemeInput,
-} from "./themes.schemas";
+import type { CreateThemeInput, UpdateThemeInput } from "./themes.schemas";
 
 export class ThemesRepository {
   async list(userId?: string) {
@@ -29,7 +26,7 @@ export class ThemesRepository {
     return rows.map((t) => {
       const rawCfg = (t.config ?? {}) as Record<string, unknown>;
       const config: Record<string, string> = Object.fromEntries(
-        Object.entries(rawCfg).map(([k, v]) => [k, String(v)])
+        Object.entries(rawCfg).map(([k, v]) => [k, String(v)]),
       );
       return {
         id: t.id,
@@ -53,7 +50,7 @@ export class ThemesRepository {
 
     const rawCfg = (t.config ?? {}) as Record<string, unknown>;
     const config: Record<string, string> = Object.fromEntries(
-      Object.entries(rawCfg).map(([k, v]) => [k, String(v)])
+      Object.entries(rawCfg).map(([k, v]) => [k, String(v)]),
     );
     return {
       id: t.id,
@@ -86,7 +83,7 @@ export class ThemesRepository {
 
     const rawCfg = (row.config ?? {}) as Record<string, unknown>;
     const config: Record<string, string> = Object.fromEntries(
-      Object.entries(rawCfg).map(([k, v]) => [k, String(v)])
+      Object.entries(rawCfg).map(([k, v]) => [k, String(v)]),
     );
     return {
       id: row.id,
@@ -121,7 +118,7 @@ export class ThemesRepository {
 
     const rawCfg2 = (row.config ?? {}) as Record<string, unknown>;
     const config2: Record<string, string> = Object.fromEntries(
-      Object.entries(rawCfg2).map(([k, v]) => [k, String(v)])
+      Object.entries(rawCfg2).map(([k, v]) => [k, String(v)]),
     );
     return {
       id: row.id,

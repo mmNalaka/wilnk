@@ -46,12 +46,16 @@ export const themesRouter = {
       z.object({
         themeId: z.string(),
         data: updateThemeInputSchema,
-      })
+      }),
     )
     .output(themeResponseSchema)
     .handler(async ({ input, context }) => {
       const userId = context.session.user.id;
-      const theme = await themesRepository.update(input.themeId, userId, input.data);
+      const theme = await themesRepository.update(
+        input.themeId,
+        userId,
+        input.data,
+      );
       return { theme };
     }),
 

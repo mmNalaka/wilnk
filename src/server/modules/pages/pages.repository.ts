@@ -3,9 +3,19 @@ import { pages, themes } from "@/server/db/schema/main.schema";
 import { eq, and, desc, or } from "drizzle-orm";
 import { nanoid } from "nanoid";
 import { PuckData } from "@/types/types";
-import type { CreatePageInput, UpdatePageInput, Page, PageListItem, PageWithTheme } from "./pages.schemas";
+import type {
+  CreatePageInput,
+  UpdatePageInput,
+  Page,
+  PageListItem,
+  PageWithTheme,
+} from "./pages.schemas";
 import { pagesAnalytics } from "./pages.analytics";
-import { generateSlug, generateDuplicateSlug, isPagePublished } from "./pages.utils";
+import {
+  generateSlug,
+  generateDuplicateSlug,
+  isPagePublished,
+} from "./pages.utils";
 import { PageNotFoundError } from "./pages.errors";
 
 export class PagesRepository {
@@ -33,12 +43,15 @@ export class PagesRepository {
       .orderBy(desc(pages.updatedAt));
 
     // Get analytics for all pages
-    const pageIds = userPages.map(p => p.id);
+    const pageIds = userPages.map((p) => p.id);
     const analytics = await pagesAnalytics.getAnalyticsForPages(pageIds);
 
     // Transform to include computed fields
     return userPages.map((page) => {
-      const pageAnalytics = analytics.get(page.id) || { viewCount: 0, clickCount: 0 };
+      const pageAnalytics = analytics.get(page.id) || {
+        viewCount: 0,
+        clickCount: 0,
+      };
       return {
         ...page,
         isPublished: isPagePublished(page.status, page.publishedAt),
@@ -51,14 +64,17 @@ export class PagesRepository {
   /**
    * Get a single page by ID and user ID
    */
-  async findByIdAndUserId(pageId: string, userId: string): Promise<Page | null> {
+  async findByIdAndUserId(
+    pageId: string,
+    userId: string,
+  ): Promise<Page | null> {
     const [page] = await db
       .select()
       .from(pages)
       .where(and(eq(pages.id, pageId), eq(pages.userId, userId)))
       .limit(1);
 
-    return page ? page as Page : null;
+    return page ? (page as Page) : null;
   }
 
   /**
@@ -92,8 +108,8 @@ export class PagesRepository {
         and(
           or(eq(pages.slug, slug), eq(pages.id, slug)),
           eq(pages.status, "published"),
-          eq(pages.isPublic, true)
-        )
+          eq(pages.isPublic, true),
+        ),
       )
       .limit(1);
 
@@ -135,10 +151,7 @@ export class PagesRepository {
       updatedAt: new Date(),
     };
 
-    const [createdPage] = await db
-      .insert(pages)
-      .values(newPage)
-      .returning();
+    const [createdPage] = await db.insert(pages).values(newPage).returning();
 
     return createdPage as Page;
   }
@@ -146,7 +159,11 @@ export class PagesRepository {
   /**
    * Update an existing page
    */
-  async update(pageId: string, userId: string, data: UpdatePageInput): Promise<Page> {
+  async update(
+    pageId: string,
+    userId: string,
+    data: UpdatePageInput,
+  ): Promise<Page> {
     // Verify page ownership first
     const [existingPage] = await db
       .select()
@@ -160,7 +177,7 @@ export class PagesRepository {
 
     // Transform content field if provided
     const updateData = { ...data };
-    if ('content' in updateData) {
+    if ("content" in updateData) {
       // Handle content field transformation if needed
     }
 
@@ -224,7 +241,9 @@ export class PagesRepository {
       status: "draft", // Duplicates start as draft
       isPublic: originalPage.isPublic,
       password: originalPage.password,
-      metaTitle: originalPage.metaTitle ? `${originalPage.metaTitle} (Copy)` : null,
+      metaTitle: originalPage.metaTitle
+        ? `${originalPage.metaTitle} (Copy)`
+        : null,
       metaDescription: originalPage.metaDescription,
       favicon: originalPage.favicon,
       analyticsEnabled: originalPage.analyticsEnabled,
@@ -244,8 +263,11 @@ export class PagesRepository {
   /**
    * Check if a slug is available
    */
-  async isSlugAvailable(slug: string, excludePageId?: string): Promise<boolean> {
-    const conditions = excludePageId 
+  async isSlugAvailable(
+    slug: string,
+    excludePageId?: string,
+  ): Promise<boolean> {
+    const conditions = excludePageId
       ? and(eq(pages.slug, slug), eq(pages.id, excludePageId))
       : eq(pages.slug, slug);
 

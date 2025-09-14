@@ -36,7 +36,7 @@ export const themesListResponseSchema = z.object({
       config: themeConfigSchema,
       isSystem: z.boolean().optional(),
       createdAt: z.date(),
-    })
+    }),
   ),
 });
 

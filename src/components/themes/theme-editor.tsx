@@ -47,11 +47,15 @@ export function ThemeEditor({
 
   const [name, setName] = useState(initialName ?? "");
   const [description, setDescription] = useState(initialDescription ?? "");
-  const [config, setConfig] = useState<Record<string, string>>(
-    () => ({ ...(emptyThemeFromGroups()), ...(initialConfig ?? {}) })
-  );
+  const [config, setConfig] = useState<Record<string, string>>(() => ({
+    ...emptyThemeFromGroups(),
+    ...(initialConfig ?? {}),
+  }));
 
-  const shallowEqual = (a: Record<string, string>, b: Record<string, string>) => {
+  const shallowEqual = (
+    a: Record<string, string>,
+    b: Record<string, string>,
+  ) => {
     const aKeys = Object.keys(a);
     const bKeys = Object.keys(b);
     if (aKeys.length !== bKeys.length) return false;
@@ -66,7 +70,7 @@ export function ThemeEditor({
     if (open) {
       setName(initialName ?? "");
       setDescription(initialDescription ?? "");
-      const next = { ...(emptyThemeFromGroups()), ...(initialConfig ?? {}) };
+      const next = { ...emptyThemeFromGroups(), ...(initialConfig ?? {}) };
       setConfig((prev) => {
         if (!shallowEqual(prev, next)) {
           onConfigChange?.(next);
@@ -89,7 +93,7 @@ export function ThemeEditor({
         onOpenChange(false);
       },
       onError: (e) => toast.error(`Failed to create theme: ${e.message}`),
-    })
+    }),
   );
 
   const updateMutation = useMutation(
@@ -98,13 +102,15 @@ export function ThemeEditor({
         toast.success("Theme updated");
         queryClient.invalidateQueries({ queryKey: ["themes", "list"] });
         if (themeId) {
-          queryClient.invalidateQueries({ queryKey: ["themes", "get", themeId] });
+          queryClient.invalidateQueries({
+            queryKey: ["themes", "get", themeId],
+          });
         }
         onSaved?.(theme.id);
         onOpenChange(false);
       },
       onError: (e) => toast.error(`Failed to update theme: ${e.message}`),
-    })
+    }),
   );
 
   const isEditing = Boolean(themeId);
@@ -114,7 +120,11 @@ export function ThemeEditor({
       toast.error("Please enter a theme name");
       return;
     }
-    const payload = { name: name.trim(), description: description.trim(), config };
+    const payload = {
+      name: name.trim(),
+      description: description.trim(),
+      config,
+    };
     if (isEditing && themeId) {
       updateMutation.mutate({ themeId, data: payload });
     } else {
@@ -135,17 +145,27 @@ export function ThemeEditor({
       <SheetContent side="left" className="w-[360px] p-0">
         <SheetHeader className="px-4 py-3 border-b">
           <SheetTitle>{isEditing ? "Edit Theme" : "Create Theme"}</SheetTitle>
-          <SheetDescription>Adjust CSS variables and preview in real time.</SheetDescription>
+          <SheetDescription>
+            Adjust CSS variables and preview in real time.
+          </SheetDescription>
         </SheetHeader>
         <div className="h-full overflow-y-auto">
           <div className="p-4 space-y-3">
             <div className="space-y-2">
               <Label htmlFor="theme-name">Name</Label>
-              <Input id="theme-name" value={name} onChange={(e) => setName(e.target.value)} />
+              <Input
+                id="theme-name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+              />
             </div>
             <div className="space-y-2">
               <Label htmlFor="theme-desc">Description</Label>
-              <Input id="theme-desc" value={description} onChange={(e) => setDescription(e.target.value)} />
+              <Input
+                id="theme-desc"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+              />
             </div>
             <Separator className="my-1" />
             <div className="space-y-2">
@@ -154,8 +174,14 @@ export function ThemeEditor({
                   <div className="text-sm font-medium mb-2">{group.title}</div>
                   <div className="space-y-2">
                     {group.fields.map((f) => (
-                      <div key={f.key} className="grid grid-cols-[140px_1fr] items-center gap-2">
-                        <Label htmlFor={f.key} className="text-xs text-muted-foreground">
+                      <div
+                        key={f.key}
+                        className="grid grid-cols-[140px_1fr] items-center gap-2"
+                      >
+                        <Label
+                          htmlFor={f.key}
+                          className="text-xs text-muted-foreground"
+                        >
                           {f.label}
                         </Label>
                         {f.type === "color" ? (
@@ -183,9 +209,20 @@ export function ThemeEditor({
           </div>
         </div>
         <SheetFooter className="px-4 py-3 border-t flex gap-2">
-          <Button onClick={() => onOpenChange(false)} variant="outline">Close</Button>
-          <Button onClick={handleSave} disabled={createMutation.isPending || updateMutation.isPending}>
-            {isEditing ? (updateMutation.isPending ? "Updating..." : "Update Theme") : (createMutation.isPending ? "Creating..." : "Save Theme")}
+          <Button onClick={() => onOpenChange(false)} variant="outline">
+            Close
+          </Button>
+          <Button
+            onClick={handleSave}
+            disabled={createMutation.isPending || updateMutation.isPending}
+          >
+            {isEditing
+              ? updateMutation.isPending
+                ? "Updating..."
+                : "Update Theme"
+              : createMutation.isPending
+                ? "Creating..."
+                : "Save Theme"}
           </Button>
         </SheetFooter>
       </SheetContent>
@@ -196,7 +233,5 @@ export function ThemeEditor({
 
 export function ThemePreviewFrame({ style }: { style: React.CSSProperties }) {
   // Consumers can render this next to the sheet to preview.
-  return (
-    <div className="flex-1 overflow-auto" style={style} />
-  );
+  return <div className="flex-1 overflow-auto" style={style} />;
 }

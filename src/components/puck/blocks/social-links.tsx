@@ -1,7 +1,17 @@
 "use client";
 
 import { ComponentConfig } from "@measured/puck";
-import { Instagram, Twitter, Youtube, Github, Linkedin, Mail, Phone, Globe, Facebook } from "lucide-react";
+import {
+  Instagram,
+  Twitter,
+  Youtube,
+  Github,
+  Linkedin,
+  Mail,
+  Phone,
+  Globe,
+  Facebook,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export interface SocialLink {
@@ -31,7 +41,14 @@ const socialPlatforms = {
   website: { icon: Globe, name: "Website" },
 };
 
-export const SocialLinks = ({ links, layout, iconSize, showLabels, style, className }: SocialLinksProps) => {
+export const SocialLinks = ({
+  links,
+  layout,
+  iconSize,
+  showLabels,
+  style,
+  className,
+}: SocialLinksProps) => {
   if (!links || links.length === 0) {
     return (
       <div className="text-center text-muted-foreground py-8">
@@ -42,18 +59,25 @@ export const SocialLinks = ({ links, layout, iconSize, showLabels, style, classN
 
   const handleClick = (link: SocialLink) => {
     // Analytics tracking will be added here
-    if (typeof window !== 'undefined') {
-      window.open(link.url, '_blank');
+    if (typeof window !== "undefined") {
+      window.open(link.url, "_blank");
     }
   };
 
   return (
-    <div className={cn("w-full", {
-      "flex flex-wrap justify-center gap-4": layout === "grid",
-      "flex flex-col space-y-3": layout === "row",
-    }, className)}>
+    <div
+      className={cn(
+        "w-full",
+        {
+          "flex flex-wrap justify-center gap-4": layout === "grid",
+          "flex flex-col space-y-3": layout === "row",
+        },
+        className,
+      )}
+    >
       {links.map((link, index) => {
-        const platform = socialPlatforms[link.platform as keyof typeof socialPlatforms];
+        const platform =
+          socialPlatforms[link.platform as keyof typeof socialPlatforms];
         if (!platform) return null;
 
         const IconComponent = platform.icon;
@@ -76,32 +100,42 @@ export const SocialLinks = ({ links, layout, iconSize, showLabels, style, classN
               // Style variants
               {
                 // Use shadcn tokens so theme changes apply automatically
-                "bg-primary text-primary-foreground rounded-full": style === "filled" && !showLabels,
-                "bg-primary text-primary-foreground rounded-lg": style === "filled" && showLabels,
-                "border text-foreground hover:bg-accent hover:text-accent-foreground rounded-full": style === "outlined" && !showLabels,
-                "border text-foreground hover:bg-accent hover:text-accent-foreground rounded-lg": style === "outlined" && showLabels,
-                "text-foreground hover:bg-accent hover:text-accent-foreground rounded-full": style === "minimal" && !showLabels,
-                "text-foreground hover:bg-accent hover:text-accent-foreground rounded-lg": style === "minimal" && showLabels,
+                "bg-primary text-primary-foreground rounded-full":
+                  style === "filled" && !showLabels,
+                "bg-primary text-primary-foreground rounded-lg":
+                  style === "filled" && showLabels,
+                "border text-foreground hover:bg-accent hover:text-accent-foreground rounded-full":
+                  style === "outlined" && !showLabels,
+                "border text-foreground hover:bg-accent hover:text-accent-foreground rounded-lg":
+                  style === "outlined" && showLabels,
+                "text-foreground hover:bg-accent hover:text-accent-foreground rounded-full":
+                  style === "minimal" && !showLabels,
+                "text-foreground hover:bg-accent hover:text-accent-foreground rounded-lg":
+                  style === "minimal" && showLabels,
               },
               // Layout specific
               {
                 "justify-center": layout === "grid",
                 "justify-start w-full": layout === "row",
-              }
+              },
             )}
           >
-            <IconComponent className={cn("flex-shrink-0", {
-              "w-4 h-4": iconSize === "sm",
-              "w-5 h-5": iconSize === "md",
-              "w-6 h-6": iconSize === "lg",
-            })} />
-            
+            <IconComponent
+              className={cn("flex-shrink-0", {
+                "w-4 h-4": iconSize === "sm",
+                "w-5 h-5": iconSize === "md",
+                "w-6 h-6": iconSize === "lg",
+              })}
+            />
+
             {showLabels && (
-              <span className={cn("font-medium", {
-                "text-sm": iconSize === "sm",
-                "text-base": iconSize === "md",
-                "text-lg": iconSize === "lg",
-              })}>
+              <span
+                className={cn("font-medium", {
+                  "text-sm": iconSize === "sm",
+                  "text-base": iconSize === "md",
+                  "text-lg": iconSize === "lg",
+                })}
+              >
                 {link.username || platform.name}
               </span>
             )}
@@ -185,8 +219,16 @@ export const socialLinksConfig: ComponentConfig<SocialLinksProps> = {
   },
   defaultProps: {
     links: [
-      { platform: "instagram", url: "https://instagram.com/username", username: "@username" },
-      { platform: "twitter", url: "https://twitter.com/username", username: "@username" },
+      {
+        platform: "instagram",
+        url: "https://instagram.com/username",
+        username: "@username",
+      },
+      {
+        platform: "twitter",
+        url: "https://twitter.com/username",
+        username: "@username",
+      },
     ],
     layout: "grid",
     iconSize: "md",

@@ -26,8 +26,11 @@ export const pagesRouter = {
     .output(pageResponseSchema)
     .handler(async ({ input, context }) => {
       const userId = context.session.user.id;
-      const page = await pagesRepository.findByIdAndUserId(input.pageId, userId);
-      
+      const page = await pagesRepository.findByIdAndUserId(
+        input.pageId,
+        userId,
+      );
+
       if (!page) {
         throw new Error("Page not found");
       }
@@ -41,7 +44,7 @@ export const pagesRouter = {
     .output(pageWithThemeResponseSchema)
     .handler(async ({ input }) => {
       const page = await pagesRepository.findPublishedBySlug(input.slug);
-      
+
       if (!page) {
         throw new Error("Page not found");
       }
@@ -70,12 +73,16 @@ export const pagesRouter = {
       z.object({
         pageId: z.string(),
         data: updatePageInputSchema,
-      })
+      }),
     )
     .output(pageResponseSchema)
     .handler(async ({ input, context }) => {
       const userId = context.session.user.id;
-      const page = await pagesRepository.update(input.pageId, userId, input.data);
+      const page = await pagesRepository.update(
+        input.pageId,
+        userId,
+        input.data,
+      );
       return { page };
     }),
 

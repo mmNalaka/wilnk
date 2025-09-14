@@ -12,29 +12,44 @@ export interface TextBlockProps {
   className?: string;
 }
 
-export const TextBlock = ({ content, alignment, size, weight, color, className }: TextBlockProps) => {
+export const TextBlock = ({
+  content,
+  alignment,
+  size,
+  weight,
+  color,
+  className,
+}: TextBlockProps) => {
   return (
-    <div className={cn("w-full", {
-      "text-left": alignment === "left",
-      "text-center": alignment === "center",
-      "text-right": alignment === "right",
-    }, className)}>
-      <p className={cn("leading-relaxed", {
-        // Size variants
-        "text-sm": size === "sm",
-        "text-base": size === "md",
-        "text-lg": size === "lg",
-        "text-xl": size === "xl",
-        // Weight variants
-        "font-normal": weight === "normal",
-        "font-medium": weight === "medium",
-        "font-semibold": weight === "semibold",
-        "font-bold": weight === "bold",
-        // Color variants
-        "text-foreground": color === "default",
-        "text-muted-foreground": color === "muted",
-        "text-primary": color === "accent",
-      })}>
+    <div
+      className={cn(
+        "w-full",
+        {
+          "text-left": alignment === "left",
+          "text-center": alignment === "center",
+          "text-right": alignment === "right",
+        },
+        className,
+      )}
+    >
+      <p
+        className={cn("leading-relaxed", {
+          // Size variants
+          "text-sm": size === "sm",
+          "text-base": size === "md",
+          "text-lg": size === "lg",
+          "text-xl": size === "xl",
+          // Weight variants
+          "font-normal": weight === "normal",
+          "font-medium": weight === "medium",
+          "font-semibold": weight === "semibold",
+          "font-bold": weight === "bold",
+          // Color variants
+          "text-foreground": color === "default",
+          "text-muted-foreground": color === "muted",
+          "text-primary": color === "accent",
+        })}
+      >
         {content}
       </p>
     </div>

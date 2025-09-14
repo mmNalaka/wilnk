@@ -10,14 +10,20 @@ export interface SpacerProps {
 
 export const Spacer = ({ height, className }: SpacerProps) => {
   return (
-    <div className={cn("w-full", {
-      "h-2": height === "xs",
-      "h-4": height === "sm", 
-      "h-8": height === "md",
-      "h-16": height === "lg",
-      "h-24": height === "xl",
-      "h-32": height === "2xl",
-    }, className)} />
+    <div
+      className={cn(
+        "w-full",
+        {
+          "h-2": height === "xs",
+          "h-4": height === "sm",
+          "h-8": height === "md",
+          "h-16": height === "lg",
+          "h-24": height === "xl",
+          "h-32": height === "2xl",
+        },
+        className,
+      )}
+    />
   );
 };
 

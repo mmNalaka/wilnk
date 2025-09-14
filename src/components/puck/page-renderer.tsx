@@ -13,11 +13,7 @@ interface PageRendererProps {
   theme?: ThemeConfig | Record<string, string>;
 }
 
-export const PageRenderer = ({
-  data,
-  className,
-  theme,
-}: PageRendererProps) => {
+export const PageRenderer = ({ data, className, theme }: PageRendererProps) => {
   type CSSVarKey =
     | "--primary"
     | "--secondary"
@@ -102,7 +98,7 @@ export const PageRenderer = ({
       <div
         className={cn(
           "theme-container bg-background text-foreground",
-          className
+          className,
         )}
       >
         <div className="max-w-md mx-auto px-4 py-4">

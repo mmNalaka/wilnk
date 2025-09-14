@@ -47,12 +47,19 @@ export const PageEditor = ({
     initialData || {
       content: [],
       root: {},
-    }
+    },
   );
 
   // Load themes from DB via oRPC (select array directly for safe typing)
   const { data: themes = [], isLoading: isThemesLoading } = useQuery<
-    { themes: { id: string; name: string; description: string | null; config: Record<string, string> }[] },
+    {
+      themes: {
+        id: string;
+        name: string;
+        description: string | null;
+        config: Record<string, string>;
+      }[];
+    },
     Error,
     ThemeConfig[]
   >({
@@ -68,16 +75,16 @@ export const PageEditor = ({
       })),
   });
   const [selectedThemeId, setSelectedThemeId] = useState<string | undefined>(
-    () => themeId
+    () => themeId,
   );
 
   const selectedTheme = useMemo(
     () => themes.find((t: ThemeConfig) => t.id === selectedThemeId),
-    [themes, selectedThemeId]
+    [themes, selectedThemeId],
   );
   const runtimeThemeStyle = useMemo(
     () => (selectedTheme?.config ?? {}) as React.CSSProperties,
-    [selectedTheme]
+    [selectedTheme],
   );
 
   const ThemeSelector = ({

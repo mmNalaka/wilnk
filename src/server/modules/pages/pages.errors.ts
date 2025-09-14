@@ -44,27 +44,27 @@ export function handlePageError(error: unknown): never {
   if (error instanceof PageNotFoundError) {
     throw error;
   }
-  
+
   if (error instanceof PageAccessDeniedError) {
     throw error;
   }
-  
+
   if (error instanceof InvalidSlugError) {
     throw error;
   }
-  
+
   if (error instanceof SlugAlreadyExistsError) {
     throw error;
   }
-  
+
   if (error instanceof PageValidationError) {
     throw error;
   }
-  
+
   // Generic error handling
   if (error instanceof Error) {
     throw new Error(`Page operation failed: ${error.message}`);
   }
-  
+
   throw new Error("Unknown page operation error");
 }

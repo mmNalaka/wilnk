@@ -1,7 +1,17 @@
 "use client";
 
 import { ComponentConfig } from "@measured/puck";
-import { ExternalLink, Instagram, Twitter, Youtube, Github, Linkedin, Mail, Phone, Globe } from "lucide-react";
+import {
+  ExternalLink,
+  Instagram,
+  Twitter,
+  Youtube,
+  Github,
+  Linkedin,
+  Mail,
+  Phone,
+  Globe,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 
@@ -28,21 +38,39 @@ const iconMap = {
   external: ExternalLink,
 };
 
-export const LinkButton = ({ title, url, description, icon, style, size, openInNewTab, className }: LinkButtonProps) => {
-  const IconComponent = icon && iconMap[icon as keyof typeof iconMap] ? iconMap[icon as keyof typeof iconMap] : null;
+export const LinkButton = ({
+  title,
+  url,
+  description,
+  icon,
+  style,
+  size,
+  openInNewTab,
+  className,
+}: LinkButtonProps) => {
+  const IconComponent =
+    icon && iconMap[icon as keyof typeof iconMap]
+      ? iconMap[icon as keyof typeof iconMap]
+      : null;
 
   const handleClick = () => {
     // Track click analytics
-    if (typeof window !== 'undefined') {
+    if (typeof window !== "undefined") {
       if (window.__ANALYTICS_ENABLED__) {
-        import('../analytics-tracker').then(({ getAnalytics }) => {
+        import("../analytics-tracker").then(({ getAnalytics }) => {
           const analytics = getAnalytics();
           // pageId is managed by tracker (stored from page view)
-          analytics.trackClick(undefined, 'LinkButton', 'LinkButton', url, title);
+          analytics.trackClick(
+            undefined,
+            "LinkButton",
+            "LinkButton",
+            url,
+            title,
+          );
         });
       }
-      
-      window.open(url, openInNewTab ? '_blank' : '_self');
+
+      window.open(url, openInNewTab ? "_blank" : "_self");
     }
   };
 
@@ -50,22 +78,32 @@ export const LinkButton = ({ title, url, description, icon, style, size, openInN
     <Button
       onClick={handleClick}
       variant={
-        style === "filled" ? "default" : style === "outlined" ? "outline" : "ghost"
+        style === "filled"
+          ? "default"
+          : style === "outlined"
+            ? "outline"
+            : "ghost"
       }
       size={size === "sm" ? "sm" : size === "lg" ? "lg" : "default"}
       className={cn(
-        "w-full transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] rounded-lg", 
+        "w-full transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] rounded-lg",
         // ensure center layout similar to previous
         "flex items-center justify-center gap-3",
-        className
+        className,
       )}
     >
       {IconComponent && <IconComponent className="w-5 h-5 flex-shrink-0" />}
       <div className="flex-1 text-center">
         <div className="font-medium">{title}</div>
-        {description && <div className="text-sm text-muted-foreground mt-1">{description}</div>}
+        {description && (
+          <div className="text-sm text-muted-foreground mt-1">
+            {description}
+          </div>
+        )}
       </div>
-      {!IconComponent && <ExternalLink className="w-4 h-4 flex-shrink-0 opacity-70" />}
+      {!IconComponent && (
+        <ExternalLink className="w-4 h-4 flex-shrink-0 opacity-70" />
+      )}
     </Button>
   );
 };

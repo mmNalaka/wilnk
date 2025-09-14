@@ -83,7 +83,9 @@ export default function DashboardPage() {
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-8">
           <div className="flex-1">
             <h1 className="text-2xl sm:text-3xl font-bold">My Pages</h1>
-            <p className="text-sm sm:text-base text-muted-foreground mt-1">Manage your Link-in-Bio pages</p>
+            <p className="text-sm sm:text-base text-muted-foreground mt-1">
+              Manage your Link-in-Bio pages
+            </p>
           </div>
           <Button
             className="flex items-center gap-2 w-full sm:w-auto"

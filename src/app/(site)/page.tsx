@@ -6,8 +6,8 @@ import { client } from "@/utils/query-client";
 
 export default function Home() {
   const healthCheck = useQuery({
-    queryKey: ['health', 'healthCheck'],
-    queryFn: () => client.health.healthCheck()
+    queryKey: ["health", "healthCheck"],
+    queryFn: () => client.health.healthCheck(),
   });
 
   return (
@@ -19,8 +19,8 @@ export default function Home() {
         {healthCheck.isLoading
           ? "Checking..."
           : healthCheck.data
-          ? "Connected"
-          : "Disconnected"}
+            ? "Connected"
+            : "Disconnected"}
       </span>
     </main>
   );

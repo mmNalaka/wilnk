@@ -43,7 +43,7 @@ export function SectionCards({
     columns.md ? `md:grid-cols-${columns.md}` : "",
     columns.lg ? `lg:grid-cols-${columns.lg}` : "",
     columns.xl ? `xl:grid-cols-${columns.xl}` : "",
-    className
+    className,
   );
 
   return (

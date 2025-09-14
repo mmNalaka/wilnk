@@ -12,9 +12,7 @@ export const puckConfig: Config = {
   root: {
     render: ({ children }: { children: React.ReactNode }) => (
       <div className="bg-background theme-container h-full">
-        <div className="max-w-md mx-auto px-4 py-4">
-          {children}
-        </div>
+        <div className="max-w-md mx-auto px-4 py-4">{children}</div>
       </div>
     ),
   },
@@ -45,4 +43,3 @@ export const puckConfig: Config = {
     },
   },
 };
-

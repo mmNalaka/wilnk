@@ -4,7 +4,11 @@ export type UserPlan = "free" | "pro" | "enterprise";
 export type PageStatus = "draft" | "published" | "archived";
 export type ThemeStatus = "draft" | "published" | "archived";
 export type BlockStatus = "draft" | "published" | "archived";
-export type SubscriptionStatus = "active" | "cancelled" | "expired" | "past_due";
+export type SubscriptionStatus =
+  | "active"
+  | "cancelled"
+  | "expired"
+  | "past_due";
 export type DeviceType = "mobile" | "desktop" | "tablet";
 
 // Puck data structure types
@@ -24,14 +28,27 @@ export interface PuckComponent {
 // Block template configuration types
 export interface BlockConfig {
   fields: Record<string, FieldConfig>;
-  defaultProps?: Record<string, object | Array<object> | string | number | boolean>;
+  defaultProps?: Record<
+    string,
+    object | Array<object> | string | number | boolean
+  >;
   category?: string;
   icon?: string;
   preview?: string;
 }
 
 export interface FieldConfig {
-  type: "text" | "textarea" | "number" | "select" | "radio" | "checkbox" | "url" | "color" | "image" | "external";
+  type:
+    | "text"
+    | "textarea"
+    | "number"
+    | "select"
+    | "radio"
+    | "checkbox"
+    | "url"
+    | "color"
+    | "image"
+    | "external";
   label?: string;
   placeholder?: string;
   options?: Array<{ label: string; value: string }>;

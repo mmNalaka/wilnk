@@ -41,36 +41,46 @@ export const analyticsRouter = {
   // Get analytics overview
   overview: protectedProcedure
     .input(z.object({ timeRange: timeRangeSchema.optional() }))
-    .output(z.object({
-      totalViews: z.number(),
-      totalClicks: z.number(),
-      uniqueVisitors: z.number(),
-      clickThroughRate: z.number(),
-      topPages: z.array(z.object({
-        id: z.string(),
-        title: z.string(),
-        slug: z.string(),
-        views: z.number(),
-        clicks: z.number(),
-        ctr: z.number(),
-      })),
-      topCountries: z.array(z.object({
-        country: z.string(),
-        views: z.number(),
-        percentage: z.number(),
-      })),
-      dailyStats: z.array(z.object({
-        date: z.string(),
-        views: z.number(),
-        clicks: z.number(),
-        visitors: z.number(),
-      })),
-      topReferrers: z.array(z.object({
-        referrer: z.string(),
-        views: z.number(),
-        percentage: z.number(),
-      })),
-    }))
+    .output(
+      z.object({
+        totalViews: z.number(),
+        totalClicks: z.number(),
+        uniqueVisitors: z.number(),
+        clickThroughRate: z.number(),
+        topPages: z.array(
+          z.object({
+            id: z.string(),
+            title: z.string(),
+            slug: z.string(),
+            views: z.number(),
+            clicks: z.number(),
+            ctr: z.number(),
+          }),
+        ),
+        topCountries: z.array(
+          z.object({
+            country: z.string(),
+            views: z.number(),
+            percentage: z.number(),
+          }),
+        ),
+        dailyStats: z.array(
+          z.object({
+            date: z.string(),
+            views: z.number(),
+            clicks: z.number(),
+            visitors: z.number(),
+          }),
+        ),
+        topReferrers: z.array(
+          z.object({
+            referrer: z.string(),
+            views: z.number(),
+            percentage: z.number(),
+          }),
+        ),
+      }),
+    )
     .handler(async ({ input, context }) => {
       const userId = context.session.user.id;
       const timeRange = input.timeRange || "7d";
@@ -78,7 +88,7 @@ export const analyticsRouter = {
       // Calculate date range
       const now = new Date();
       let startDate: Date;
-      
+
       switch (timeRange) {
         case "7d":
           startDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
@@ -100,7 +110,7 @@ export const analyticsRouter = {
         .from(pages)
         .where(eq(pages.userId, userId));
 
-      const pageIds = userPages.map(p => p.id);
+      const pageIds = userPages.map((p) => p.id);
 
       if (pageIds.length === 0) {
         return {
@@ -122,8 +132,8 @@ export const analyticsRouter = {
         .where(
           and(
             sql`${pageViews.pageId} IN ${pageIds}`,
-            gte(pageViews.viewedAt, startDate)
-          )
+            gte(pageViews.viewedAt, startDate),
+          ),
         );
 
       // Total clicks
@@ -133,8 +143,8 @@ export const analyticsRouter = {
         .where(
           and(
             sql`${clickEvents.pageId} IN ${pageIds}`,
-            gte(clickEvents.clickedAt, startDate)
-          )
+            gte(clickEvents.clickedAt, startDate),
+          ),
         );
 
       // Unique visitors
@@ -144,20 +154,21 @@ export const analyticsRouter = {
         .where(
           and(
             sql`${pageViews.pageId} IN ${pageIds}`,
-            gte(pageViews.viewedAt, startDate)
-          )
+            gte(pageViews.viewedAt, startDate),
+          ),
         );
 
       const toNumber = (v: unknown) => {
-        if (typeof v === 'number') return v;
-        if (typeof v === 'bigint') return Number(v);
+        if (typeof v === "number") return v;
+        if (typeof v === "bigint") return Number(v);
         return Number(v as string);
       };
 
       const totalViews = toNumber(totalViewsResult.count);
       const totalClicks = toNumber(totalClicksResult.count);
       const uniqueVisitors = toNumber(uniqueVisitorsResult.count);
-      const clickThroughRate = totalViews > 0 ? (totalClicks / totalViews) * 100 : 0;
+      const clickThroughRate =
+        totalViews > 0 ? (totalClicks / totalViews) * 100 : 0;
 
       // Top pages
       const topPages = await db
@@ -168,11 +179,12 @@ export const analyticsRouter = {
           views: count(pageViews.id),
         })
         .from(pages)
-        .leftJoin(pageViews, 
+        .leftJoin(
+          pageViews,
           and(
             eq(pages.id, pageViews.pageId),
-            gte(pageViews.viewedAt, startDate)
-          )
+            gte(pageViews.viewedAt, startDate),
+          ),
         )
         .where(eq(pages.userId, userId))
         .groupBy(pages.id, pages.title, pages.slug)
@@ -180,7 +192,7 @@ export const analyticsRouter = {
         .limit(5);
 
       // Clicks per page for top pages
-      const topPageIds = topPages.map(p => p.id);
+      const topPageIds = topPages.map((p) => p.id);
       let clicksByPage: Record<string, number> = {};
       if (topPageIds.length > 0) {
         const clicksRows = await db
@@ -189,11 +201,13 @@ export const analyticsRouter = {
           .where(
             and(
               sql`${clickEvents.pageId} IN ${topPageIds}`,
-              gte(clickEvents.clickedAt, startDate)
-            )
+              gte(clickEvents.clickedAt, startDate),
+            ),
           )
           .groupBy(clickEvents.pageId);
-        clicksByPage = Object.fromEntries(clicksRows.map(r => [r.pageId, toNumber(r.clicks)]));
+        clicksByPage = Object.fromEntries(
+          clicksRows.map((r) => [r.pageId, toNumber(r.clicks)]),
+        );
       }
 
       // Top countries
@@ -206,8 +220,8 @@ export const analyticsRouter = {
         .where(
           and(
             sql`${pageViews.pageId} IN ${pageIds}`,
-            gte(pageViews.viewedAt, startDate)
-          )
+            gte(pageViews.viewedAt, startDate),
+          ),
         )
         .groupBy(pageViews.country)
         .orderBy(desc(count()))
@@ -216,45 +230,45 @@ export const analyticsRouter = {
       // Daily stats
       const dailyViews = await db
         .select({
-          date: sql`DATE(${pageViews.viewedAt})`.as('date'),
+          date: sql`DATE(${pageViews.viewedAt})`.as("date"),
           views: count(pageViews.id),
         })
         .from(pageViews)
         .where(
           and(
             sql`${pageViews.pageId} IN ${pageIds}`,
-            gte(pageViews.viewedAt, startDate)
-          )
+            gte(pageViews.viewedAt, startDate),
+          ),
         )
         .groupBy(sql`DATE(${pageViews.viewedAt})`)
         .orderBy(sql`DATE(${pageViews.viewedAt})`);
 
       const dailyVisitors = await db
         .select({
-          date: sql`DATE(${pageViews.viewedAt})`.as('date'),
+          date: sql`DATE(${pageViews.viewedAt})`.as("date"),
           visitors: sql`COUNT(DISTINCT ${pageViews.visitorId})`,
         })
         .from(pageViews)
         .where(
           and(
             sql`${pageViews.pageId} IN ${pageIds}`,
-            gte(pageViews.viewedAt, startDate)
-          )
+            gte(pageViews.viewedAt, startDate),
+          ),
         )
         .groupBy(sql`DATE(${pageViews.viewedAt})`)
         .orderBy(sql`DATE(${pageViews.viewedAt})`);
 
       const dailyClicks = await db
         .select({
-          date: sql`DATE(${clickEvents.clickedAt})`.as('date'),
+          date: sql`DATE(${clickEvents.clickedAt})`.as("date"),
           clicks: count(),
         })
         .from(clickEvents)
         .where(
           and(
             sql`${clickEvents.pageId} IN ${pageIds}`,
-            gte(clickEvents.clickedAt, startDate)
-          )
+            gte(clickEvents.clickedAt, startDate),
+          ),
         )
         .groupBy(sql`DATE(${clickEvents.clickedAt})`)
         .orderBy(sql`DATE(${clickEvents.clickedAt})`);
@@ -269,24 +283,26 @@ export const analyticsRouter = {
         .where(
           and(
             sql`${pageViews.pageId} IN ${pageIds}`,
-            gte(pageViews.viewedAt, startDate)
-          )
+            gte(pageViews.viewedAt, startDate),
+          ),
         )
         .groupBy(pageViews.referrer)
         .orderBy(desc(count()))
         .limit(5);
 
       // Calculate percentages for countries and referrers
-      const topCountriesWithPercentage = topCountries.map(country => ({
+      const topCountriesWithPercentage = topCountries.map((country) => ({
         country: country.country || "Unknown",
         views: toNumber(country.views),
-        percentage: totalViews > 0 ? (toNumber(country.views) / totalViews) * 100 : 0,
+        percentage:
+          totalViews > 0 ? (toNumber(country.views) / totalViews) * 100 : 0,
       }));
 
-      const topReferrersWithPercentage = topReferrers.map(referrer => ({
+      const topReferrersWithPercentage = topReferrers.map((referrer) => ({
         referrer: referrer.referrer || "Direct",
         views: toNumber(referrer.views),
-        percentage: totalViews > 0 ? (toNumber(referrer.views) / totalViews) * 100 : 0,
+        percentage:
+          totalViews > 0 ? (toNumber(referrer.views) / totalViews) * 100 : 0,
       }));
 
       return {
@@ -294,7 +310,7 @@ export const analyticsRouter = {
         totalClicks: toNumber(totalClicks),
         uniqueVisitors: toNumber(uniqueVisitors),
         clickThroughRate: Math.round(clickThroughRate * 10) / 10,
-        topPages: topPages.map(page => {
+        topPages: topPages.map((page) => {
           const viewsNum = toNumber(page.views);
           const clicksNum = toNumber(clicksByPage[page.id] ?? 0);
           const ctr = viewsNum > 0 ? (clicksNum / viewsNum) * 100 : 0;
@@ -309,9 +325,13 @@ export const analyticsRouter = {
         }),
         topCountries: topCountriesWithPercentage,
         dailyStats: (() => {
-          const clicksByDate = Object.fromEntries(dailyClicks.map(dc => [String(dc.date), toNumber(dc.clicks)]));
-          const visitorsByDate = Object.fromEntries(dailyVisitors.map(dv => [String(dv.date), toNumber(dv.visitors)]));
-          return dailyViews.map(dv => ({
+          const clicksByDate = Object.fromEntries(
+            dailyClicks.map((dc) => [String(dc.date), toNumber(dc.clicks)]),
+          );
+          const visitorsByDate = Object.fromEntries(
+            dailyVisitors.map((dv) => [String(dv.date), toNumber(dv.visitors)]),
+          );
+          return dailyViews.map((dv) => ({
             date: String(dv.date),
             views: toNumber(dv.views),
             clicks: clicksByDate[String(dv.date)] ?? 0,

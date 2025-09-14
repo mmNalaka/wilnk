@@ -21,7 +21,10 @@ export const PuckLoadingSkeleton = () => {
             <div className="h-6 w-24 bg-muted rounded animate-pulse"></div>
             <div className="space-y-2">
               {[...Array(6)].map((_, i) => (
-                <div key={i} className="h-12 w-full bg-muted/70 rounded animate-pulse"></div>
+                <div
+                  key={i}
+                  className="h-12 w-full bg-muted/70 rounded animate-pulse"
+                ></div>
               ))}
             </div>
           </div>
