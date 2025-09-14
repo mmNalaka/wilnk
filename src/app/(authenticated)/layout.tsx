@@ -7,12 +7,10 @@ export default function RootLayout({
 }>) {
   return (
     <div className="min-h-screen bg-background">
-      <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container flex h-14 items-center">
-          <MainNav />
-        </div>
+      <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-4">
+        <MainNav />
       </header>
-      <main className="flex-1">{children}</main>
+      <main className="flex-1 px-4">{children}</main>
     </div>
   );
 }

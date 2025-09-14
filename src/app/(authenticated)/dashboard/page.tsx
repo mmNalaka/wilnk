@@ -78,7 +78,7 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen w-full bg-background text-foreground">
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto py-8">
         {/* Header */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-8">
           <div className="flex-1">
