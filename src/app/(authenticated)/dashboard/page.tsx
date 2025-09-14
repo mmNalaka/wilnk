@@ -4,76 +4,12 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Plus, Loader2 } from "lucide-react";
 import Link from "next/link";
-import { nanoid } from "nanoid";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { client } from "@/utils/query-client";
 import { toast } from "sonner";
 import { PagesTable } from "./pages-table";
 
-interface Page {
-  id: string;
-  title: string;
-  slug: string;
-  status: "draft" | "published" | "archived";
-  views: number;
-  clicks: number;
-  createdAt: string;
-  updatedAt: string;
-}
-
-// Mock data service - replace with actual API calls
-const mockDashboardService = {
-  async getPages(): Promise<Page[]> {
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-
-    return [
-      {
-        id: "page-1",
-        title: "My Main Page",
-        slug: "johndoe",
-        status: "published",
-        views: 1234,
-        clicks: 89,
-        createdAt: "2024-01-15",
-        updatedAt: "2024-01-20",
-      },
-      {
-        id: "page-2",
-        title: "Business Links",
-        slug: "johndoe-business",
-        status: "draft",
-        views: 0,
-        clicks: 0,
-        createdAt: "2024-01-18",
-        updatedAt: "2024-01-18",
-      },
-      {
-        id: "page-3",
-        title: "Social Media Hub",
-        slug: "johndoe-social",
-        status: "published",
-        views: 567,
-        clicks: 34,
-        createdAt: "2024-01-10",
-        updatedAt: "2024-01-16",
-      },
-    ];
-  },
-
-  async deletePage(pageId: string) {
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 500));
-    console.log("Deleting page:", pageId);
-  },
-
-  async duplicatePage(pageId: string) {
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 800));
-    console.log("Duplicating page:", pageId);
-    return nanoid();
-  },
-};
+// NOTE: Dashboard uses oRPC client for data operations
 
 export default function DashboardPage() {
   const [deletingPageId, setDeletingPageId] = useState<string | null>(null);
@@ -99,15 +35,15 @@ export default function DashboardPage() {
   });
 
   const handleDelete = async (pageId: string) => {
-    if (!confirm("Are you sure you want to delete this page?")) return;
-
     try {
       setDeletingPageId(pageId);
-      await mockDashboardService.deletePage(pageId);
+      await client.pages.delete({ pageId });
+      toast.success("Page deleted");
       // After deletion, refresh the list from server
       pagesQuery.refetch();
     } catch (error) {
       console.error("Failed to delete page:", error);
+      toast.error("Failed to delete page");
     } finally {
       setDeletingPageId(null);
     }
