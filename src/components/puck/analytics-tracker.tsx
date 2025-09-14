@@ -11,6 +11,17 @@ declare global {
 }
 
 const DISABLE_GEO = process.env.NEXT_PUBLIC_ANALYTICS_DISABLE_GEO === 'true';
+const SAMPLING_VIEWS = Number(
+  process.env.NEXT_PUBLIC_ANALYTICS_SAMPLING_VIEWS ??
+  process.env.NEXT_PUBLIC_ANALYTICS_SAMPLING_RATE ??
+  1
+);
+const SAMPLING_CLICKS = Number(
+  process.env.NEXT_PUBLIC_ANALYTICS_SAMPLING_CLICKS ??
+  process.env.NEXT_PUBLIC_ANALYTICS_SAMPLING_RATE ??
+  1
+);
+const CLICK_DEBOUNCE_MS = Number(process.env.NEXT_PUBLIC_ANALYTICS_CLICK_DEBOUNCE_MS ?? 400);
 
 interface AnalyticsTrackerProps {
   pageId: string;
@@ -22,6 +33,8 @@ class AnalyticsService {
   private visitorId: string;
   private sessionId: string;
   private lastPageId?: string;
+  private sentPageViews = new Set<string>();
+  private lastClickTs = new Map<string, number>();
 
   constructor() {
     // Get or create visitor ID (persisted in localStorage)
@@ -89,10 +102,22 @@ class AnalyticsService {
     };
   }
 
+  private shouldSample(p: number) {
+    if (Number.isNaN(p)) return true;
+    if (p >= 1) return true;
+    if (p <= 0) return false;
+    return Math.random() < p;
+  }
+
   async trackPageView(pageId: string) {
     try {
-      // Store pageId for later click tracking
+      // Remember page for subsequent clicks
       this.lastPageId = pageId;
+
+      // Sampling and dedupe per session+page
+      if (!this.shouldSample(SAMPLING_VIEWS)) return;
+      if (this.sentPageViews.has(pageId)) return;
+
       const locationData = await this.getLocationData();
       const deviceInfo = this.getDeviceInfo();
       
@@ -111,6 +136,9 @@ class AnalyticsService {
 
       // Send via oRPC client
       await api.analytics.trackPageView(viewData);
+
+      // Mark as sent for this session
+      this.sentPageViews.add(pageId);
     } catch (error) {
       console.warn('Failed to track page view:', error);
     }
@@ -118,6 +146,16 @@ class AnalyticsService {
 
   async trackClick(pageId: string | undefined, blockId: string, blockType: string, url: string, label?: string) {
     try {
+      // Sampling for clicks
+      if (!this.shouldSample(SAMPLING_CLICKS)) return;
+
+      // Debounce rapid repeated clicks per block+url
+      const key = `${pageId ?? this.lastPageId ?? ''}|${blockId}|${url}`;
+      const now = Date.now();
+      const last = this.lastClickTs.get(key) ?? 0;
+      if (now - last < CLICK_DEBOUNCE_MS) return;
+      this.lastClickTs.set(key, now);
+
       const locationData = await this.getLocationData();
       const deviceInfo = this.getDeviceInfo();
       
