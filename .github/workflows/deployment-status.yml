@@ -78,6 +78,37 @@ The changes from this release PR have been merged and production deployment shou
 *This comment was automatically generated when the release was merged to main.*`
             });
 
+      - name: Create GitHub Release
+        if: steps.find-pr.outputs.pr_number != ''
+        run: |
+          # Extract version from PR title
+          PR_TITLE=$(gh pr view ${{ steps.find-pr.outputs.pr_number }} --json title --jq '.title')
+          VERSION=$(echo "$PR_TITLE" | grep -oE 'v[0-9]+\.[0-9]+\.[0-9]+' || echo "v1.0.0")
+          
+          # Get commits since last release
+          LAST_TAG=$(gh release list --limit 1 --json tagName --jq '.[0].tagName // ""')
+          if [[ -n "$LAST_TAG" ]]; then
+            COMMITS=$(git log ${LAST_TAG}..HEAD --oneline --pretty=format:"- %s (%h)" | head -20)
+          else
+            COMMITS=$(git log --oneline --pretty=format:"- %s (%h)" | head -20)
+          fi
+          
+          # Create release
+          gh release create "$VERSION" \
+            --title "Release $VERSION" \
+            --notes "## 🚀 What's New
+          
+          $COMMITS
+          
+          ## 🌍 Deployment
+          - **Environment**: Production
+          - **URL**: https://wilnk-production.nalaka-manathunga.workers.dev
+          - **Database**: \`wilnk-production\`
+          
+          This release was automatically created when the release PR was merged."
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Create Deployment
         uses: actions/github-script@v7
         with:

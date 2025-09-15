@@ -15,6 +15,38 @@ jobs:
         with:
           fetch-depth: 0 # Fetch all history for proper comparison
 
+      - name: Get release information
+        id: release-info
+        run: |
+          # Get next release number
+          LATEST_TAG=$(gh release list --limit 1 --json tagName --jq '.[0].tagName // "v0.0.0"')
+          if [[ "$LATEST_TAG" == "null" ]] || [[ "$LATEST_TAG" == "" ]]; then
+            LATEST_TAG="v0.0.0"
+          fi
+          
+          # Extract version number and increment
+          VERSION_NUMBER=$(echo $LATEST_TAG | sed 's/v//' | awk -F. '{print $1"."$2"."$3+1}')
+          NEXT_VERSION="v${VERSION_NUMBER}"
+          
+          echo "next_version=${NEXT_VERSION}" >> $GITHUB_OUTPUT
+          echo "Next release version: ${NEXT_VERSION}"
+          
+          # Get commits between main and staging
+          COMMITS=$(git log main..staging --oneline --pretty=format:"- %s (%h)" | head -20)
+          if [[ -z "$COMMITS" ]]; then
+            COMMITS="- No new commits"
+          fi
+          
+          # Save commits to file (multiline output)
+          echo "commits<<EOF" >> $GITHUB_OUTPUT
+          echo "$COMMITS" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+          
+          echo "Commits to be released:"
+          echo "$COMMITS"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          
       - name: Check if PR already exists
         id: check-pr
         run: |
@@ -28,13 +60,14 @@ jobs:
         if: steps.check-pr.outputs.pr_exists == ''
         run: |
           gh pr create \
-            --title "🚀 Release: staging → main" \
-            --body "## 🚀 Release Pull Request
+            --title "🚀 Release ${{ steps.release-info.outputs.next_version }}: staging → main" \
+            --body "## 🚀 Release Pull Request - ${{ steps.release-info.outputs.next_version }}
           
           This PR contains all changes from \`staging\` ready to be deployed to production.
           
-          ### 📋 Changes
-          This PR will automatically update when new commits are pushed to the \`staging\` branch.
+          ### 📦 What's New in ${{ steps.release-info.outputs.next_version }}
+          
+          ${{ steps.release-info.outputs.commits }}
           
           ### 🔍 Review Checklist
           - [ ] All tests are passing
@@ -55,7 +88,7 @@ jobs:
           ---
           
           > **Note**: This PR is automatically created/updated when changes are pushed to the \`staging\` branch.
-          > Review the changes carefully before merging to production." \
+          > The commit list above reflects the current changes and will be updated automatically." \
             --base main \
             --head staging \
             --label "release,staging→main,auto-pr" \
@@ -66,7 +99,47 @@ jobs:
       - name: Update existing PR
         if: steps.check-pr.outputs.pr_exists != ''
         run: |
-          echo "Release PR #${{ steps.check-pr.outputs.pr_number }} already exists and will be automatically updated by GitHub when staging changes."
-          gh pr comment ${{ steps.check-pr.outputs.pr_number }} --body "🔄 **Staging Updated**: New changes have been pushed to staging and are included in this release PR."
+          # Update PR title with new version
+          gh pr edit ${{ steps.check-pr.outputs.pr_number }} \
+            --title "🚀 Release ${{ steps.release-info.outputs.next_version }}: staging → main"
+          
+          # Update PR body with fresh commit list
+          gh pr edit ${{ steps.check-pr.outputs.pr_number }} \
+            --body "## 🚀 Release Pull Request - ${{ steps.release-info.outputs.next_version }}
+          
+          This PR contains all changes from \`staging\` ready to be deployed to production.
+          
+          ### 📦 What's New in ${{ steps.release-info.outputs.next_version }}
+          
+          ${{ steps.release-info.outputs.commits }}
+          
+          ### 🔍 Review Checklist
+          - [ ] All tests are passing
+          - [ ] Changes have been tested on staging environment
+          - [ ] Database migrations (if any) have been reviewed
+          - [ ] No breaking changes or proper migration plan in place
+          - [ ] Documentation has been updated if needed
+          
+          ### 🌍 Staging Environment
+          - **URL**: https://wilnk-staging.nalaka-manathunga.workers.dev
+          - **Database**: \`wilnk-staging\`
+          
+          ### 🎯 Production Environment  
+          After merge, changes will be deployed to:
+          - **URL**: https://wilnk-production.nalaka-manathunga.workers.dev
+          - **Database**: \`wilnk-production\`
+          
+          ---
+          
+          > **Note**: This PR is automatically created/updated when changes are pushed to the \`staging\` branch.
+          > The commit list above reflects the current changes and will be updated automatically."
+          
+          # Add a comment about the update
+          gh pr comment ${{ steps.check-pr.outputs.pr_number }} --body "🔄 **Staging Updated** - ${{ steps.release-info.outputs.next_version }}
+          
+          New changes have been pushed to staging. The PR title, version, and commit list have been refreshed.
+          
+          **Latest commits:**
+          ${{ steps.release-info.outputs.commits }}"
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
