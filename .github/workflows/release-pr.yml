@@ -193,12 +193,8 @@ jobs:
           gh pr edit ${{ steps.check-pr.outputs.pr_number }} \
             --body-file "$PR_BODY_FILE"
           
-          # Add a comment about the update
-          gh pr comment ${{ steps.check-pr.outputs.pr_number }} --body "🔄 **Staging Updated** - ${{ steps.release-info.outputs.next_version }}
-          
-          New changes have been pushed to staging. The PR title, version, and commit list have been refreshed."
-          
-          **Latest commits:**
-          ${{ steps.release-info.outputs.commits }}"
+          # Add a simple comment about the update
+          gh pr comment ${{ steps.check-pr.outputs.pr_number }} --body "🔄 Staging has been updated with new changes. Check the PR description for the latest commit list."
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          
