@@ -17,8 +17,12 @@ jobs:
           
       - name: Fetch all branches
         run: |
-          git fetch origin main:main
-          git fetch origin staging:staging
+          # Fetch without checking out
+          git fetch origin main
+          git fetch origin staging
+          # Create local tracking branches if they don't exist
+          git show-ref --verify --quiet refs/heads/main || git branch --track main origin/main
+          git show-ref --verify --quiet refs/heads/staging || git branch --track staging origin/staging
           echo "Current branch: $(git branch --show-current)"
           echo "Available branches: $(git branch -a)"
 
