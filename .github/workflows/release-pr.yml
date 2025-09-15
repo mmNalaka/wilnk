@@ -60,9 +60,9 @@ jobs:
             echo "Still no commits found, showing recent commits on current branch:"
             COMMITS=$(git log --oneline --pretty=format:"- %s (%h)" -5)
             COMMITS="**Recent commits on staging:**
-$COMMITS
+            $COMMITS
 
-_Note: Unable to determine diff with main branch. This may indicate the branches are in sync._"
+            _Note: Unable to determine diff with main branch. This may indicate the branches are in sync._"
           fi
           
           # Save commits to file (multiline output)
@@ -80,47 +80,60 @@ _Note: Unable to determine diff with main branch. This may indicate the branches
       - name: Check if PR already exists
         id: check-pr
         run: |
+          # Debug: List all PRs for visibility
+          echo "=== Debug: Listing all open PRs ==="
+          gh pr list --state open --json number,headRefName,baseRefName,title
+          
+          # Find PR from staging to main
           PR_NUMBER=$(gh pr list --base main --head staging --state open --json number --jq '.[0].number // empty')
-          echo "pr_exists=${PR_NUMBER}" >> $GITHUB_OUTPUT
+          
+          # Fallback: Try to find any PR from any branch to main
+          if [[ -z "$PR_NUMBER" ]]; then
+            echo "No PR found from staging to main, checking for any PR to main..."
+            PR_NUMBER=$(gh pr list --base main --state open --json number,headRefName --jq '.[0].number // empty')
+          fi
+          
+          echo "Found PR number: ${PR_NUMBER:-None}"
+          echo "pr_exists=${PR_NUMBER:-false}" >> $GITHUB_OUTPUT
           echo "pr_number=${PR_NUMBER}" >> $GITHUB_OUTPUT
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Create Release PR
-        if: steps.check-pr.outputs.pr_exists == ''
+        if: steps.check-pr.outputs.pr_exists == '' || steps.check-pr.outputs.pr_exists == 'false'
         run: |
           # Create a temporary file for the PR body
           PR_BODY_FILE=$(mktemp)
           cat > "$PR_BODY_FILE" << EOF
-## 🚀 Release Pull Request - ${{ steps.release-info.outputs.next_version }}
+          ## 🚀 Release Pull Request - ${{ steps.release-info.outputs.next_version }}
 
-This PR contains all changes from \`staging\` ready to be deployed to production.
+          This PR contains all changes from \`staging\` ready to be deployed to production.
 
-### 📦 What's New in ${{ steps.release-info.outputs.next_version }}
+          ### 📦 What's New in ${{ steps.release-info.outputs.next_version }}
 
-${{ steps.release-info.outputs.commits || 'No new commits' }}
+          ${{ steps.release-info.outputs.commits || 'No new commits' }}
 
-### 🔍 Review Checklist
-- [ ] All tests are passing
-- [ ] Changes have been tested on staging environment
-- [ ] Database migrations (if any) have been reviewed
-- [ ] No breaking changes or proper migration plan in place
-- [ ] Documentation has been updated if needed
+          ### 🔍 Review Checklist
+          - [ ] All tests are passing
+          - [ ] Changes have been tested on staging environment
+          - [ ] Database migrations (if any) have been reviewed
+          - [ ] No breaking changes or proper migration plan in place
+          - [ ] Documentation has been updated if needed
 
-### 🌍 Staging Environment
-- **URL**: https://wilnk-staging.nalaka-manathunga.workers.dev
-- **Database**: \`wilnk-staging\`
+          ### 🌍 Staging Environment
+          - **URL**: https://wilnk-staging.nalaka-manathunga.workers.dev
+          - **Database**: \`wilnk-staging\`
 
-### 🎯 Production Environment  
-After merge, changes will be deployed to:
-- **URL**: https://wilnk-production.nalaka-manathunga.workers.dev
-- **Database**: \`wilnk-production\`
+          ### 🎯 Production Environment  
+          After merge, changes will be deployed to:
+          - **URL**: https://wilnk-production.nalaka-manathunga.workers.dev
+          - **Database**: \`wilnk-production\`
 
----
+          ---
 
-> **Note**: This PR is automatically created/updated when changes are pushed to the \`staging\` branch.
-> The commit list above reflects the current changes and will be updated automatically.
-EOF
+          > **Note**: This PR is automatically created/updated when changes are pushed to the \`staging\` branch.
+          > The commit list above reflects the current changes and will be updated automatically.
+          EOF
 
           gh pr create \
             --title "🚀 Release ${{ steps.release-info.outputs.next_version }}: staging → main" \
@@ -138,35 +151,35 @@ EOF
           # Create a temporary file for the PR body
           PR_BODY_FILE=$(mktemp)
           cat > "$PR_BODY_FILE" << EOF
-## 🚀 Release Pull Request - ${{ steps.release-info.outputs.next_version }}
+          ## 🚀 Release Pull Request - ${{ steps.release-info.outputs.next_version }}
 
-This PR contains all changes from \`staging\` ready to be deployed to production.
+          This PR contains all changes from \`staging\` ready to be deployed to production.
 
-### 📦 What's New in ${{ steps.release-info.outputs.next_version }}
+          ### 📦 What's New in ${{ steps.release-info.outputs.next_version }}
 
-${{ steps.release-info.outputs.commits || 'No new commits' }}
+          ${{ steps.release-info.outputs.commits || 'No new commits' }}
 
-### 🔍 Review Checklist
-- [ ] All tests are passing
-- [ ] Changes have been tested on staging environment
-- [ ] Database migrations (if any) have been reviewed
-- [ ] No breaking changes or proper migration plan in place
-- [ ] Documentation has been updated if needed
+          ### 🔍 Review Checklist
+          - [ ] All tests are passing
+          - [ ] Changes have been tested on staging environment
+          - [ ] Database migrations (if any) have been reviewed
+          - [ ] No breaking changes or proper migration plan in place
+          - [ ] Documentation has been updated if needed
 
-### 🌍 Staging Environment
-- **URL**: https://wilnk-staging.nalaka-manathunga.workers.dev
-- **Database**: \`wilnk-staging\`
+          ### 🌍 Staging Environment
+          - **URL**: https://wilnk-staging.nalaka-manathunga.workers.dev
+          - **Database**: \`wilnk-staging\`
 
-### 🎯 Production Environment  
-After merge, changes will be deployed to:
-- **URL**: https://wilnk-production.nalaka-manathunga.workers.dev
-- **Database**: \`wilnk-production\`
+          ### 🎯 Production Environment  
+          After merge, changes will be deployed to:
+          - **URL**: https://wilnk-production.nalaka-manathunga.workers.dev
+          - **Database**: \`wilnk-production\`
 
----
+          ---
 
-> **Note**: This PR is automatically created/updated when changes are pushed to the \`staging\` branch.
-> The commit list above reflects the current changes and will be updated automatically.
-EOF
+          > **Note**: This PR is automatically created/updated when changes are pushed to the \`staging\` branch.
+          > The commit list above reflects the current changes and will be updated automatically.
+          EOF
 
           # Update PR title with new version
           gh pr edit ${{ steps.check-pr.outputs.pr_number }} \
