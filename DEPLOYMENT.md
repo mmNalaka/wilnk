@@ -151,3 +151,28 @@ The following labels have been created for the automated release workflow:
 - `release` - Release-related PRs and issues
 - `staging→main` - Automated PRs from staging to main  
 - `auto-pr` - Automatically created pull requests
+
+
+## 🎉 Enhanced Release Workflow Features
+
+The release PR workflow now includes:
+
+### 🏷️ **Auto-incrementing Release Numbers**
+- Automatically detects the latest release version
+- Increments patch version (e.g., v1.0.0 → v1.0.1)  
+- Updates PR titles with version numbers
+
+### 📋 **Dynamic Commit Lists**
+- Shows "What's New" section with all commits since main
+- Updates existing PRs with fresh commit lists
+- Includes commit hashes for easy reference
+
+### 🚀 **GitHub Releases**
+- Automatically creates GitHub releases when PRs are merged
+- Includes detailed changelog with commit history
+- Links to deployment environment
+
+### 🔄 **Smart PR Updates**
+- Updates existing PR titles, descriptions, and adds comments
+- No duplicate PRs - intelligently manages existing ones
+- Real-time updates when staging changes
