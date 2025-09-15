@@ -1,0 +1,59 @@
+name: Create Release PR
+
+on:
+  push:
+    branches: [staging]
+
+jobs:
+  create-release-pr:
+    runs-on: ubuntu-latest
+    name: Create or Update Release PR
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Fetch all history for proper comparison
+
+      - name: Create or Update Release PR
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          base: main
+          head: staging
+          title: "🚀 Release: staging → main"
+          body: |
+            ## 🚀 Release Pull Request
+            
+            This PR contains all changes from `staging` ready to be deployed to production.
+            
+            ### 📋 Changes
+            This PR will automatically update when new commits are pushed to the `staging` branch.
+            
+            ### 🔍 Review Checklist
+            - [ ] All tests are passing
+            - [ ] Changes have been tested on staging environment
+            - [ ] Database migrations (if any) have been reviewed
+            - [ ] No breaking changes or proper migration plan in place
+            - [ ] Documentation has been updated if needed
+            
+            ### 🌍 Staging Environment
+            - **URL**: https://wilnk-staging.nalaka-manathunga.workers.dev
+            - **Database**: `wilnk-staging`
+            
+            ### 🎯 Production Environment  
+            After merge, changes will be deployed to:
+            - **URL**: https://wilnk-production.nalaka-manathunga.workers.dev
+            - **Database**: `wilnk-production`
+            
+            ---
+            
+            > **Note**: This PR is automatically created/updated when changes are pushed to the `staging` branch.
+            > Review the changes carefully before merging to production.
+          labels: |
+            release
+            staging→main
+            auto-pr
+          assignees: |
+            mmNalaka
+          draft: false

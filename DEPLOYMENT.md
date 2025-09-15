@@ -57,6 +57,13 @@ pnpm run migration:apply:local
 - **Staging**: Automatically deploys on push to `staging` branch via Cloudflare git integration
 - **Production**: Automatically deploys on push to `main` branch via Cloudflare git integration
 
+### Automated Release Pull Requests
+
+GitHub Actions will automatically:
+- **Create Release PRs**: When you push to `staging`, a PR from `staging` → `main` is created/updated
+- **Run CI Checks**: Lint, type check, and format validation on all PRs
+- **Deployment Notifications**: Comments on merged release PRs with deployment status
+
 ### Setting up Git Integration
 
 1. **For Staging Worker (`wilnk-staging`)**:
@@ -81,9 +88,20 @@ pnpm run migration:apply:local
 
 ## Development Workflow
 
-1. **Feature Development**: Work on feature branches, merge to `staging`
-2. **Testing**: Test changes on staging environment
-3. **Release**: Create PR from `staging` to `main` for production deployment
+### 🔄 Automated Release Process
+1. **Feature Development**: Work on feature branches
+2. **Stage Changes**: Merge features to `staging` branch
+   - Triggers automatic staging deployment via Cloudflare
+   - Creates/updates release PR (`staging` → `main`)
+3. **Testing**: Test changes on staging environment
+4. **Release**: Review and merge the auto-created release PR
+   - Triggers production deployment
+   - Adds deployment notification to the PR
+
+### 🛠️ Manual Commands
+- **Push to Staging**: `git push origin staging`
+- **Create Release PR**: Automatic (no manual action needed)
+- **Deploy to Production**: Merge the release PR
 
 ## Environment Variables
 
@@ -108,3 +126,22 @@ For local development, use the staging configuration with local database:
 pnpm run db:local
 pnpm run dev
 ```
+
+## CI/CD Workflows
+
+### ✅ CI Checks (`.github/workflows/ci.yml`)
+Runs on all pull requests and pushes:
+- **Lint**: `pnpm run lint`
+- **Type Check**: `pnpm run check-types`
+- **Format Check**: `pnpm run format:check`
+
+### 🔄 Release PR Creation (`.github/workflows/release-pr.yml`)
+- Triggers on push to `staging` branch
+- Creates or updates PR from `staging` to `main`
+- Includes helpful checklist and environment links
+- Auto-assigns the PR to you
+
+### 📢 Deployment Notifications (`.github/workflows/deployment-status.yml`)
+- Triggers when release PR is merged to `main`
+- Adds deployment status comment to the merged PR
+- Creates GitHub deployment record

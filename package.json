@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "format": "prettier --write \"src/**/*.ts\" \"src/**/*.tsx\" \"src/**/*.js\" \"src/**/*.jsx\"",
+    "format:check": "prettier --check \"src/**/*.ts\" \"src/**/*.tsx\" \"src/**/*.js\" \"src/**/*.jsx\"",
     "check-types": "tsc --noEmit",
     "compile": "pnpm run build --compile --minify --sourcemap --bytecode ./src/index.ts --outfile server",
     "deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy",

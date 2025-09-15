@@ -1,0 +1,93 @@
+name: Deployment Status
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deployment-notification:
+    runs-on: ubuntu-latest
+    name: Notify Production Deployment
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Find Release PR
+        id: find-pr
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { data: prs } = await github.rest.pulls.list({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'closed',
+              base: 'main',
+              head: `${context.repo.owner}:staging`,
+              sort: 'updated',
+              direction: 'desc',
+              per_page: 1
+            });
+            
+            if (prs.length > 0) {
+              const pr = prs[0];
+              if (pr.merged && pr.merged_at) {
+                // Check if merge was recent (within last 5 minutes)
+                const mergeTime = new Date(pr.merged_at);
+                const now = new Date();
+                const diffMinutes = (now - mergeTime) / (1000 * 60);
+                
+                if (diffMinutes <= 5) {
+                  core.setOutput('pr_number', pr.number);
+                  core.setOutput('pr_title', pr.title);
+                  return;
+                }
+              }
+            }
+            
+            core.setOutput('pr_number', '');
+
+      - name: Comment on PR
+        if: steps.find-pr.outputs.pr_number != ''
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const prNumber = '${{ steps.find-pr.outputs.pr_number }}';
+            const prTitle = '${{ steps.find-pr.outputs.pr_title }}';
+            
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: prNumber,
+              body: `## 🎉 Production Deployment Started!
+              
+The changes from this release PR have been merged and production deployment should be starting soon via Cloudflare's git integration.
+
+### 📊 Deployment Details
+- **Environment**: Production
+- **URL**: https://wilnk-production.nalaka-manathunga.workers.dev
+- **Database**: \`wilnk-production\`
+- **Commit**: ${context.sha}
+
+### ⏱️ Next Steps
+- Monitor the Cloudflare dashboard for deployment status
+- Verify the deployment by checking the production URL
+- Run any necessary database migrations if not automated
+
+---
+*This comment was automatically generated when the release was merged to main.*`
+            });
+
+      - name: Create Deployment
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.repos.createDeployment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: context.sha,
+              environment: 'production',
+              description: 'Production deployment via Cloudflare git integration',
+              auto_merge: false,
+              required_contexts: []
+            });
