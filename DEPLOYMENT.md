@@ -18,16 +18,20 @@ This project uses a two-environment setup with Cloudflare Workers and D1 databas
 - **URL**: https://wilnk-production.nalaka-manathunga.workers.dev
 - **Config**: `wrangler.production.jsonc`
 
-## Manual Deployment
+## Git-Based Deployment
+
+Both environments use Cloudflare's git-based deployment system:
 
 ### Deploy to Staging
 ```bash
-pnpm run deploy:staging
+# Push to staging branch to trigger staging deployment
+git push origin staging
 ```
 
 ### Deploy to Production
 ```bash
-pnpm run deploy:production
+# Push to main branch to trigger production deployment
+git push origin main
 ```
 
 ## Database Migrations
@@ -47,29 +51,33 @@ pnpm run migration:apply:production
 pnpm run migration:apply:local
 ```
 
-## CI/CD Pipeline
+## CI/CD Setup in Cloudflare
 
 ### Automatic Deployments
-- **Staging**: Automatically deploys on push to `staging` branch
-- **Production**: Automatically deploys on push to `main` branch (with approval requirement)
+- **Staging**: Automatically deploys on push to `staging` branch via Cloudflare git integration
+- **Production**: Automatically deploys on push to `main` branch via Cloudflare git integration
 
-### Required GitHub Secrets
-Set up the following secret in your GitHub repository settings:
+### Setting up Git Integration
 
-1. Go to repository Settings → Secrets and variables → Actions
-2. Add: `CLOUDFLARE_API_TOKEN`
-   - Get your token from: https://dash.cloudflare.com/profile/api-tokens
-   - Use "Edit Cloudflare Workers" template or custom with:
-     - Permissions: `Zone:Read`, `Account:Read`, `User:Read`, `Workers Scripts:Edit`, `D1:Edit`
-     - Account Resources: Include your account
-     - Zone Resources: Include your zones (if any)
+1. **For Staging Worker (`wilnk-staging`)**:
+   - Go to Cloudflare Dashboard → Workers & Pages
+   - Select or create `wilnk-staging` worker
+   - Go to Settings → Deployments
+   - Connect to GitHub repository
+   - Set branch to `staging`
+   - Set build configuration:
+     - Build command: `npm run build` (or equivalent)
+     - Output directory: `.open-next`
 
-### Production Environment Protection
-The production workflow includes an environment protection rule. To set this up:
-
-1. Go to repository Settings → Environments
-2. Create "production" environment
-3. Add protection rules (require reviewers, etc.)
+2. **For Production Worker (`wilnk-production`)**:
+   - Go to Cloudflare Dashboard → Workers & Pages  
+   - Select or create `wilnk-production` worker
+   - Go to Settings → Deployments
+   - Connect to GitHub repository
+   - Set branch to `main`
+   - Set build configuration:
+     - Build command: `npm run build` (or equivalent)
+     - Output directory: `.open-next`
 
 ## Development Workflow
 

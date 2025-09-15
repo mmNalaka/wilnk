@@ -22,8 +22,11 @@
     "db:migrate": "drizzle-kit migrate",
     "db:seed": "drizzle-kit seed",
     "migration:apply:local": "wrangler d1 migrations apply wilnk-staging --local",
-    "migration:apply:staging": "wrangler d1 migrations apply wilnk-staging --remote",
-    "migration:apply:production": "wrangler d1 migrations apply wilnk-production --remote --config wrangler.production.jsonc"
+    "migration:apply:staging": "wrangler d1 migrations apply wilnk-staging --remote --config wrangler.jsonc",
+    "migration:apply:production": "wrangler d1 migrations apply wilnk-production --remote --config wrangler.production.jsonc",
+    "db:setup:staging": "wrangler d1 migrations apply wilnk-staging --remote --config wrangler.jsonc",
+    "db:setup:production": "wrangler d1 migrations apply wilnk-production --remote --config wrangler.production.jsonc",
+    "setup:env": "./scripts/setup-env.sh"
   },
   "dependencies": {
     "@libsql/client": "^0.15.9",
