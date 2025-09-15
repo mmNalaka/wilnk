@@ -145,3 +145,9 @@ Runs on all pull requests and pushes:
 - Triggers when release PR is merged to `main`
 - Adds deployment status comment to the merged PR
 - Creates GitHub deployment record
+# GitHub Labels Created
+
+The following labels have been created for the automated release workflow:
+- `release` - Release-related PRs and issues
+- `staging→main` - Automated PRs from staging to main  
+- `auto-pr` - Automatically created pull requests
