@@ -5,7 +5,7 @@
  */
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "wilnk-production",
+  "name": "wilnk",
   "main": ".open-next/worker.js",
   "compatibility_date": "2025-03-01",
   "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
