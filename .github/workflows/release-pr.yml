@@ -1,0 +1,72 @@
+name: Create Release PR
+
+on:
+  push:
+    branches: [staging]
+
+jobs:
+  create-release-pr:
+    runs-on: ubuntu-latest
+    name: Create or Update Release PR
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Fetch all history for proper comparison
+
+      - name: Check if PR already exists
+        id: check-pr
+        run: |
+          PR_NUMBER=$(gh pr list --base main --head staging --state open --json number --jq '.[0].number // empty')
+          echo "pr_exists=${PR_NUMBER}" >> $GITHUB_OUTPUT
+          echo "pr_number=${PR_NUMBER}" >> $GITHUB_OUTPUT
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create Release PR
+        if: steps.check-pr.outputs.pr_exists == ''
+        run: |
+          gh pr create \
+            --title "🚀 Release: staging → main" \
+            --body "## 🚀 Release Pull Request
+          
+          This PR contains all changes from \`staging\` ready to be deployed to production.
+          
+          ### 📋 Changes
+          This PR will automatically update when new commits are pushed to the \`staging\` branch.
+          
+          ### 🔍 Review Checklist
+          - [ ] All tests are passing
+          - [ ] Changes have been tested on staging environment
+          - [ ] Database migrations (if any) have been reviewed
+          - [ ] No breaking changes or proper migration plan in place
+          - [ ] Documentation has been updated if needed
+          
+          ### 🌍 Staging Environment
+          - **URL**: https://wilnk-staging.nalaka-manathunga.workers.dev
+          - **Database**: \`wilnk-staging\`
+          
+          ### 🎯 Production Environment  
+          After merge, changes will be deployed to:
+          - **URL**: https://wilnk-production.nalaka-manathunga.workers.dev
+          - **Database**: \`wilnk-production\`
+          
+          ---
+          
+          > **Note**: This PR is automatically created/updated when changes are pushed to the \`staging\` branch.
+          > Review the changes carefully before merging to production." \
+            --base main \
+            --head staging \
+            --label "release,staging→main,auto-pr" \
+            --assignee mmNalaka
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Update existing PR
+        if: steps.check-pr.outputs.pr_exists != ''
+        run: |
+          echo "Release PR #${{ steps.check-pr.outputs.pr_number }} already exists and will be automatically updated by GitHub when staging changes."
+          gh pr comment ${{ steps.check-pr.outputs.pr_number }} --body "🔄 **Staging Updated**: New changes have been pushed to staging and are included in this release PR."
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
