@@ -1,10 +1,11 @@
 /**
+ * Production environment configuration
  * For more details on how to configure Wrangler, refer to:
  * https://developers.cloudflare.com/workers/wrangler/configuration/
  */
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "wilnk-staging",
+  "name": "wilnk-production",
   "main": ".open-next/worker.js",
   "compatibility_date": "2025-03-01",
   "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
@@ -16,18 +17,17 @@
     "enabled": true
   },
   "vars": {
-    "NODE_ENV": "staging",
+    "NODE_ENV": "production",
     "CORS_ORIGIN": "*",
-    "NEXT_PUBLIC_SERVER_URL": "https://wilnk-staging.nalaka-manathunga.workers.dev",
-    "BETTER_AUTH_URL": "https://wilnk-staging.nalaka-manathunga.workers.dev",
-    "NEXT_PUBLIC_DISABLE_SIGNUP": "false"
+    "NEXT_PUBLIC_SERVER_URL": "https://wilnk-production.nalaka-manathunga.workers.dev",
+    "BETTER_AUTH_URL": "https://wilnk-production.nalaka-manathunga.workers.dev",
+    "NEXT_PUBLIC_DISABLE_SIGNUP": "true"
   },
   "d1_databases": [
     {
       "binding": "DB",
-      "database_name": "wilnk-staging",
-      "database_id": "eef2f4fa-1c20-4c68-83f5-b21943ff0480",
-      "preview_database_id": "local-test-db",
+      "database_name": "wilnk-production",
+      "database_id": "d304877f-0bd0-40b1-b299-d531406da244",
       "migrations_dir": "./src/server/db/migrations"
     }
   ]

@@ -11,6 +11,8 @@
     "check-types": "tsc --noEmit",
     "compile": "pnpm run build --compile --minify --sourcemap --bytecode ./src/index.ts --outfile server",
     "deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy",
+    "deploy:staging": "opennextjs-cloudflare build && opennextjs-cloudflare deploy --config wrangler.jsonc",
+    "deploy:production": "opennextjs-cloudflare build && opennextjs-cloudflare deploy --config wrangler.production.jsonc",
     "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
     "cf-typegen": "wrangler types --env-interface CloudflareEnv ./cloudflare-env.d.ts",
     "db:local": "turso dev --db-file local.db",
@@ -19,8 +21,9 @@
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
     "db:seed": "drizzle-kit seed",
-    "migration:apply:local": "wrangler d1 migrations apply wilnk-dev --local",
-    "migration:apply:remote": "wrangler d1 migrations apply wilnk-dev --remote"
+    "migration:apply:local": "wrangler d1 migrations apply wilnk-staging --local",
+    "migration:apply:staging": "wrangler d1 migrations apply wilnk-staging --remote",
+    "migration:apply:production": "wrangler d1 migrations apply wilnk-production --remote --config wrangler.production.jsonc"
   },
   "dependencies": {
     "@libsql/client": "^0.15.9",
