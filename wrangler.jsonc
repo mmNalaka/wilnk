@@ -30,5 +30,11 @@
       "preview_database_id": "local-test-db",
       "migrations_dir": "./src/server/db/migrations"
     }
+  ],
+  "routes": [
+    {
+      "pattern": "staging.wilnk.com/*",
+      "zone_name": "wilnk.com"
+    }
   ]
 }
