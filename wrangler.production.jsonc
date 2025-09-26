@@ -30,5 +30,6 @@
       "database_id": "d304877f-0bd0-40b1-b299-d531406da244",
       "migrations_dir": "./src/server/db/migrations"
     }
-  ]
+  ],
+  "route": "wilnk.com/*"
 }
